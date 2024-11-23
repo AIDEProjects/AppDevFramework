@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+		android:id="@+id/floatingTotalDebugLayout"
+		android:layout_width="560dp"
+		android:layout_height="match_parent">
+
+		<LinearLayout
+			android:id="@+id/floatingTotalDebugLayout_menu"
+			android:layout_centerHorizontal="true"
+			android:orientation="horizontal"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content">
+
+			<ToggleButton
+				android:id="@+id/floatingDebugLayout_toggleTouchable"
+				android:layout_width="32dp"
+				android:layout_height="32dp"
+				android:textOff="挡"
+				android:textOn="透"
+				android:gravity="center"
+				android:textSize="8sp" />
+
+			<ToggleButton
+				android:id="@+id/floatingDebugLayout_toggleButton"
+				android:layout_width="75dp"
+				android:layout_height="32dp"
+				android:textOn="DEBUG▲"
+				android:textOff="DEBUG▼"
+				android:gravity="center"
+				android:textSize="8sp" />
+
+			<ToggleButton
+				android:id="@+id/floatingLogLayout_toggleButton"
+				android:layout_width="75dp"
+				android:layout_height="32dp"
+				android:textOn="LOG▲"
+				android:textOff="LOG▼"
+				android:gravity="center"
+				android:textSize="8sp" />
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:id="@+id/floatingDebugLayout"
+			android:layout_below="@id/floatingTotalDebugLayout_menu"
+			android:layout_width="match_parent"
+			android:layout_height="320dp"
+			android:orientation="vertical"
+			android:background="#555555" />
+
+		<LinearLayout
+			android:id="@+id/floatingLogLayout"
+			android:layout_below="@id/floatingTotalDebugLayout_menu"
+			android:layout_width="match_parent"
+			android:layout_height="320dp"
+			android:orientation="vertical"
+			android:background="#555555" />
+
+</RelativeLayout>
+
+
