@@ -1,6 +1,8 @@
 # AppDevFramework 0.3.x
 简易AndroidApp开发库框架
 
+[![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
+
 # 待办: 
 - 手势管理器
 - - 更新区分缩放与位移方式由指间距变为角度差
