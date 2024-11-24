@@ -1,0 +1,26 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+group 'com.github.AIDEProjects'
+
+android {
+	compileSdkVersion 21
+	buildToolsVersion "21.1.0"
+	
+	defaultConfig {
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 1
+        versionName "0.1.0"
+    }
+	
+	lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+	compile fileTree(dir: 'libs', include: ['*.jar'])
+	
+	// kotlin库如果类冲突，取消下一行注释
+	// api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:2.0.0"
+}

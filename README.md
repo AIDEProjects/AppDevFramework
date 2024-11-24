@@ -1,4 +1,4 @@
-# AppDevFramework 0.4.x
+# AppDevFramework 0.3.x
 简易AndroidApp开发库框架
 
 # 待办: 
