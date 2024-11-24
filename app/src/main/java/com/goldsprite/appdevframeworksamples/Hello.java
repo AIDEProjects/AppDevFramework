@@ -1,4 +1,4 @@
-package com.goldsprite.appdevframework;
+package com.goldsprite.appdevframeworksamples;
 
 import android.app.*;
 import android.widget.*;

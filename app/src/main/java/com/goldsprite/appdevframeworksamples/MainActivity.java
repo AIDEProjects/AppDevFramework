@@ -1,4 +1,4 @@
-package com.goldsprite.appdevframework.samples;
+package com.goldsprite.appdevframeworksamples;
 
 import android.app.*;
 import android.os.*;
