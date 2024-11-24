@@ -14,12 +14,14 @@ public abstract class GestureManager implements OnTouchListener
 
 	protected boolean constrainMovement = true;
 	protected boolean constrainScl = true;
+	protected boolean enableTranslate = true;
+	protected boolean enableScl = true;
 
 	public abstract void invalidate();
 	public abstract boolean hasView();
 	public abstract Vector2 getViewSize();
 	public abstract Vector2Int getViewportSize();
-	
+
 	public GestureManager() {
 	}
 
@@ -86,37 +88,41 @@ public abstract class GestureManager implements OnTouchListener
 		}
 
 		//双指按下滑动
-		if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN) {
-			startDoubleFocusPos.set(doubleFocusPos);
-			startCanvasPos.set(canvasPos);
-			//DebugView.setDebugInfo(3, "双指按下, 记录中心坐标: " + startDoubleFocusPos);
-		}
-		if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
-			doubleTranslate.set(doubleFocusPos.subtract(startDoubleFocusPos));
-			tickDoubleTranslate.set(doubleFocusPos.subtract(lastDoubleFocusPos));
-			lastDoubleFocusPos.set(doubleFocusPos);
-			//DebugView.setDebugInfo(3, "双指滑动, 偏移量: " + doubleTranslate /*+ ", 步长偏移量: " + tickDoubleTranslate*/+ ", 第二指角度: " + doubleFocusMovementAngle);
+		if (enableTranslate) {
+			if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN) {
+				startDoubleFocusPos.set(doubleFocusPos);
+				startCanvasPos.set(canvasPos);
+				//DebugView.setDebugInfo(3, "双指按下, 记录中心坐标: " + startDoubleFocusPos);
+			}
+			if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
+				doubleTranslate.set(doubleFocusPos.subtract(startDoubleFocusPos));
+				tickDoubleTranslate.set(doubleFocusPos.subtract(lastDoubleFocusPos));
+				lastDoubleFocusPos.set(doubleFocusPos);
+				//DebugView.setDebugInfo(3, "双指滑动, 偏移量: " + doubleTranslate /*+ ", 步长偏移量: " + tickDoubleTranslate*/+ ", 第二指角度: " + doubleFocusMovementAngle);
 
-			canvasPos.set(startCanvasPos.clone().add(doubleTranslate));
-			constrainMovement(canvasPos);
-			invalidate();
+				canvasPos.set(startCanvasPos.clone().add(doubleTranslate));
+				constrainMovement(canvasPos);
+				invalidate();
+			}
 		}
 
 		//双指按下缩放
-		if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN) {
-			startDoubleDistance = doubleDistance;
-			startCanvasScl = canvasScl;
-			//DebugView.setDebugInfo(4, "双指按下, 记录中心距离: " + startDoubleDistance);
-		}
-		if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
-			doubleDistanceDiff = realDoubleDistance / startDoubleDistance;
-			//DebugView.setDebugInfo(4, String.format("双指缩放, 死区: %s/%s, 实际偏差量: %s", (int)(Math.abs(diff) * 10) / 10f, doubleSclDeadZone, doubleDistanceDiff));
+		if (enableScl) {
+			if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN) {
+				startDoubleDistance = doubleDistance;
+				startCanvasScl = canvasScl;
+				//DebugView.setDebugInfo(4, "双指按下, 记录中心距离: " + startDoubleDistance);
+			}
+			if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
+				doubleDistanceDiff = realDoubleDistance / startDoubleDistance;
+				//DebugView.setDebugInfo(4, String.format("双指缩放, 死区: %s/%s, 实际偏差量: %s", (int)(Math.abs(diff) * 10) / 10f, doubleSclDeadZone, doubleDistanceDiff));
 
-			child0SclSize = new Vector2(getViewSize().x, getViewSize().y).multiply(canvasScl);
-			//DebugView.setDebugInfo(5, "双指缩放, 子布局实际Size: " + child0SclSize);
-			canvasScl = startCanvasScl * doubleDistanceDiff;
-			canvasScl = constrainScl(canvasScl);
-			invalidate();
+				child0SclSize = new Vector2(getViewSize().x, getViewSize().y).multiply(canvasScl);
+				//DebugView.setDebugInfo(5, "双指缩放, 子布局实际Size: " + child0SclSize);
+				canvasScl = startCanvasScl * doubleDistanceDiff;
+				canvasScl = constrainScl(canvasScl);
+				invalidate();
+			}
 		}
 
 		//全部抬起
@@ -133,7 +139,7 @@ public abstract class GestureManager implements OnTouchListener
         return true;
     }
 
-	
+
 	public float getVectorAngle(Vector2 vector) {
 		double radians = Math.atan2(vector.y, vector.x);
 		double angle = (float)Math.toDegrees(radians);
@@ -159,11 +165,11 @@ public abstract class GestureManager implements OnTouchListener
     }
 
 	/*
-	增加Align标签: CENTER, LEFTDOWN
-	*/
+	 增加Align标签: CENTER, LEFTDOWN
+	 */
     private void constrainMovement(Vector2 canvasPos) {
-		if(!constrainMovement) return;
-		
+		if (!constrainMovement) return;
+
         if (hasView()) {
             int childWidth = (int) (getViewSize().x * canvasScl);
             int childHeight = (int) (getViewSize().y * canvasScl);
@@ -183,8 +189,8 @@ public abstract class GestureManager implements OnTouchListener
         }
     }
 	private float constrainScl(float scl) {
-		if(!constrainScl) return scl;
-		
+		if (!constrainScl) return scl;
+
 		return Math.max(0.1f, Math.min(5f, scl));
 	}
 
