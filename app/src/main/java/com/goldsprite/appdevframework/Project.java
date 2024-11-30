@@ -2,6 +2,8 @@ package com.goldsprite.appdevframework;
 import java.io.*;
 import com.goldsprite.appdevframework.log.*;
 import android.app.*;
+import java.util.*;
+import com.goldsprite.appdevframework.utils.*;
 
 public class Project{
 	
@@ -24,6 +26,13 @@ public class Project{
 			return logPath;
 		}
 		String[] lists = new File(logParentPath).list();
+		Arrays.sort(lists, new Comparator<String>(){
+				@Override
+				public int compare(String o1, String o2) {
+					int ret = StringUtils.natureOrderCompare(o1, o2);
+					return ret;
+				}
+		});
 		if (lists == null || lists.length == 0){
 			return logPath = logParentPath + "logs_0.txt";
 		}

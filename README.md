@@ -1,4 +1,4 @@
-# AppDevFramework 0.3.x
+# AppDevFramework 0.3.1
 简易AndroidApp开发库框架
 
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
@@ -12,6 +12,9 @@
 
 # 更新
 ## 0.4.0
+- 增加StringUtils用于字符串自然排序
+- 修复了NewLogPath的获取bug：现在会删除旧的log而不是最新的
+- Vector2增加四则(两常量参数)
 
 ## 0.3.0
 - 添加手势管理器GestureManager来处理布局的自由滑动并限制区域与缩放

@@ -1,6 +1,7 @@
 package com.goldsprite.appdevframework.math;
 
-public class Vector2 {
+public class Vector2
+{
 	public float x, y;
 	public float getX() { return x; }
 	public void setX(float x) { this.x = x; }
@@ -8,71 +9,84 @@ public class Vector2 {
 	public void setY(float y) { this.y = y; }
 
 
-	public Vector2(){ this(0, 0); }
-	public Vector2(Vector2 vec){ this(vec.getX(), vec.getY()); }
-	public Vector2(Vector2Int vec){ this(vec.getX(), vec.getY()); }
+	public Vector2() { this(0, 0); }
+	public Vector2(Vector2 vec) { this(vec.getX(), vec.getY()); }
+	public Vector2(Vector2Int vec) { this(vec.getX(), vec.getY()); }
 	public Vector2(float x, float y) { setX(x); setY(y); }
 
 
+	public Vector2 add(float x, float y) {
+		setX(getX() + x);
+		setY(getY() + y);
+		return this;
+	}
+	public Vector2 add(float val) {
+		add(val, val);
+		return this;
+	}
 	public Vector2 add(Vector2 vec) {
-		setX(getX() + vec.getX());
-		setY(getY() + vec.getY());
+		add(vec.x, vec.y);
 		return this;
 	}
 
+	public Vector2 subtract(float x, float y) {
+		setX(getX() - x);
+		setY(getY() - y);
+		return this;
+	}
+	public Vector2 subtract(float val) {
+		subtract(val, val);
+		return this;
+	}
 	public Vector2 subtract(Vector2 vec) {
-		setX(getX() - vec.getX());
-		setY(getY() - vec.getY());
+		subtract(vec.x, vec.y);
 		return this;
 	}
 
+	public Vector2 multiply(float x, float y) {
+		setX(getX() * x);
+		setY(getY() * y);
+		return this;
+	}
+	public Vector2 multiply(float val) {
+		multiply(val, val);
+		return this;
+	}
 	public Vector2 multiply(Vector2 vec) {
-		setX(getX() * vec.getX());
-		setY(getY() * vec.getY());
+		multiply(vec.x, vec.y);
 		return this;
 	}
 
+	public Vector2 divideBy(float x, float y) {
+		setX(getX() / x);
+		setY(getY() / y);
+		return this;
+	}
+	public Vector2 divideBy(float val) {
+		divideBy(val, val);
+		return this;
+	}
 	public Vector2 divideBy(Vector2 vec) {
-		setX(getX() / vec.getX());
-		setY(getY() / vec.getY());
+		divideBy(vec.x, vec.y);
 		return this;
 	}
 
-	public Vector2 add(float num) {
-		setX(getX() + num);
-		setY(getY() + num);
-		return this;
-	}
-
-	public Vector2 subtract(float num) {
-		setX(getX() - num);
-		setY(getY() - num);
-		return this;
-	}
-
-	public Vector2 multiply(float num) {
-		setX(getX() * num);
-		setY(getY() * num);
-		return this;
-	}
-
-	public Vector2 divideBy(float num) {
-		setX(getX() / num);
-		setY(getY() / num);
-		return this;
-	}
-
-
-	public void set(float x, float y){
+	public Vector2 set(float x, float y) {
 		setX(x);
 		setY(y);
+		return this;
 	}
-	public void set(Vector2 vec){
+	public Vector2 set(float val) {
+		set(val, val);
+		return this;
+	}
+	public Vector2 set(Vector2 vec) {
 		set(vec.x, vec.y);
+		return this;
 	}
 
 
-	public void moveTo(Vector2 destination, float vel){
+	public void moveTo(Vector2 destination, float vel) {
 		Vector2 dir = destination.clone().subtract(this).normalize();
 		this.add(dir.multiply(vel));
 	}
@@ -91,7 +105,7 @@ public class Vector2 {
 		return a.getX() * b.getX() + a.getY() * b.getY();
 	}
 
-	public static Vector2 moveTo(Vector2 from, Vector2 to, float vel){
+	public static Vector2 moveTo(Vector2 from, Vector2 to, float vel) {
 		Vector2 dir = to.clone().subtract(from).normalize();
 		return dir.multiply(vel);
 	}
@@ -105,18 +119,18 @@ public class Vector2 {
 		return vec.getX() == this.getX() && vec.getY() == this.getY();
 	}
 
-	public boolean isZero(){
-		if (getX() != 0 || getY() != 0){
+	public boolean isZero() {
+		if (getX() != 0 || getY() != 0) {
 			return false;
 		}
 		return getX() * getY() < Math.pow(10, -6);
 	}
 
-	public Vector2 clone(){
+	public Vector2 clone() {
 		return new Vector2(getX(), getY());
 	}
 
-	public static Vector2 zero(){
+	public static Vector2 zero() {
 		return new Vector2();
 	}
 
@@ -124,8 +138,8 @@ public class Vector2 {
 	public String toString() {
 		return String.format("{%.1f, %.1f}", getX(), getY());
 	}
-	
-	public Vector2Int toVector2Int(){
+
+	public Vector2Int toVector2Int() {
 		return new Vector2Int(this);
 	}
 
