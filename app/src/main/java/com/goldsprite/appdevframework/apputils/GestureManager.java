@@ -72,8 +72,8 @@ public abstract class GestureManager implements OnTouchListener
 			else realDoubleDistance = doubleDistance - Math.signum(diff) * doubleSclDeadZone;
 		}
 		//计算偏差角
-		singleFocusMovementAngle = getVectorAngle(singleFocusPos.clone().subtract(startSingleFocusPos).multiply(new Vector2(1, -1)).normalize());//单指位移角度
-		doubleFocusMovementAngle = getVectorAngle(doubleFocusPos.clone().subtract(startDoubleFocusPos).multiply(new Vector2(1, -1)).normalize());//第二指位移角度
+		singleFocusMovementAngle = getVectorAngle(singleFocusPos.clone().sub(startSingleFocusPos).scl(new Vector2(1, -1)).normalize());//单指位移角度
+		doubleFocusMovementAngle = getVectorAngle(doubleFocusPos.clone().sub(startDoubleFocusPos).scl(new Vector2(1, -1)).normalize());//第二指位移角度
 		doubleFingerAngleDiff = angleDifference(doubleFocusMovementAngle, singleFocusMovementAngle);
 		//DebugView.setDebugInfo(6, "双指角度差: " + doubleFingerAngleDiff);
 
@@ -83,7 +83,7 @@ public abstract class GestureManager implements OnTouchListener
 			//DebugView.setDebugInfo(3, "单指按下, 中心坐标: " + startSingleFocusPos);
 		}
 		if (pointerCount == 1 && action == MotionEvent.ACTION_MOVE) {
-			doubleTranslate.set(doubleFocusPos.subtract(startDoubleFocusPos));
+			doubleTranslate.set(doubleFocusPos.sub(startDoubleFocusPos));
 			//DebugView.setDebugInfo(3, "单指滑动, 偏移量: " + doubleTranslate + ", 角度: " + singleFocusMovementAngle);
 		}
 
@@ -95,8 +95,8 @@ public abstract class GestureManager implements OnTouchListener
 				//DebugView.setDebugInfo(3, "双指按下, 记录中心坐标: " + startDoubleFocusPos);
 			}
 			if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
-				doubleTranslate.set(doubleFocusPos.subtract(startDoubleFocusPos));
-				tickDoubleTranslate.set(doubleFocusPos.subtract(lastDoubleFocusPos));
+				doubleTranslate.set(doubleFocusPos.sub(startDoubleFocusPos));
+				tickDoubleTranslate.set(doubleFocusPos.sub(lastDoubleFocusPos));
 				lastDoubleFocusPos.set(doubleFocusPos);
 				//DebugView.setDebugInfo(3, "双指滑动, 偏移量: " + doubleTranslate /*+ ", 步长偏移量: " + tickDoubleTranslate*/+ ", 第二指角度: " + doubleFocusMovementAngle);
 
@@ -117,7 +117,7 @@ public abstract class GestureManager implements OnTouchListener
 				doubleDistanceDiff = realDoubleDistance / startDoubleDistance;
 				//DebugView.setDebugInfo(4, String.format("双指缩放, 死区: %s/%s, 实际偏差量: %s", (int)(Math.abs(diff) * 10) / 10f, doubleSclDeadZone, doubleDistanceDiff));
 
-				child0SclSize = new Vector2(getViewSize().x, getViewSize().y).multiply(canvasScl);
+				child0SclSize = new Vector2(getViewSize().x, getViewSize().y).scl(canvasScl);
 				//DebugView.setDebugInfo(5, "双指缩放, 子布局实际Size: " + child0SclSize);
 				canvasScl = startCanvasScl * doubleDistanceDiff;
 				canvasScl = constrainScl(canvasScl);

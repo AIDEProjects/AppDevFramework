@@ -29,45 +29,45 @@ public class Vector2
 		return this;
 	}
 
-	public Vector2 subtract(float x, float y) {
+	public Vector2 sub(float x, float y) {
 		setX(getX() - x);
 		setY(getY() - y);
 		return this;
 	}
-	public Vector2 subtract(float val) {
-		subtract(val, val);
+	public Vector2 sub(float val) {
+		sub(val, val);
 		return this;
 	}
-	public Vector2 subtract(Vector2 vec) {
-		subtract(vec.x, vec.y);
+	public Vector2 sub(Vector2 vec) {
+		sub(vec.x, vec.y);
 		return this;
 	}
 
-	public Vector2 multiply(float x, float y) {
+	public Vector2 scl(float x, float y) {
 		setX(getX() * x);
 		setY(getY() * y);
 		return this;
 	}
-	public Vector2 multiply(float val) {
-		multiply(val, val);
+	public Vector2 scl(float val) {
+		scl(val, val);
 		return this;
 	}
-	public Vector2 multiply(Vector2 vec) {
-		multiply(vec.x, vec.y);
+	public Vector2 scl(Vector2 vec) {
+		scl(vec.x, vec.y);
 		return this;
 	}
 
-	public Vector2 divideBy(float x, float y) {
+	public Vector2 div(float x, float y) {
 		setX(getX() / x);
 		setY(getY() / y);
 		return this;
 	}
-	public Vector2 divideBy(float val) {
-		divideBy(val, val);
+	public Vector2 div(float val) {
+		div(val, val);
 		return this;
 	}
-	public Vector2 divideBy(Vector2 vec) {
-		divideBy(vec.x, vec.y);
+	public Vector2 div(Vector2 vec) {
+		div(vec.x, vec.y);
 		return this;
 	}
 
@@ -87,13 +87,13 @@ public class Vector2
 
 
 	public void moveTo(Vector2 destination, float vel) {
-		Vector2 dir = destination.clone().subtract(this).normalize();
-		this.add(dir.multiply(vel));
+		Vector2 dir = destination.clone().sub(this).normalize();
+		this.add(dir.scl(vel));
 	}
 
 	public Vector2 normalize() {
 		float mag = magnitude();
-		this.divideBy(mag);
+		this.div(mag);
 		return this;
 	}
 
@@ -106,12 +106,12 @@ public class Vector2
 	}
 
 	public static Vector2 moveTo(Vector2 from, Vector2 to, float vel) {
-		Vector2 dir = to.clone().subtract(from).normalize();
-		return dir.multiply(vel);
+		Vector2 dir = to.clone().sub(from).normalize();
+		return dir.scl(vel);
 	}
 
 	public static Vector2 lerp(Vector2 start, Vector2 end, float interpulation) {
-		return start.clone().multiply(1 - interpulation).add(end.clone().multiply(interpulation));
+		return start.clone().scl(1 - interpulation).add(end.clone().scl(interpulation));
 	}
 
 
@@ -141,6 +141,18 @@ public class Vector2
 
 	public Vector2Int toVector2Int() {
 		return new Vector2Int(this);
+	}
+
+	public float angle() {
+		return getAngle(this);
+	}
+	public static float getAngle(Vector2 vector) {
+		double radians = Math.atan2(vector.y, vector.x);
+		double angle = (float)Math.toDegrees(radians);
+		if (angle < 0) {
+			angle += 360;
+		}
+		return (float)angle;
 	}
 
 
