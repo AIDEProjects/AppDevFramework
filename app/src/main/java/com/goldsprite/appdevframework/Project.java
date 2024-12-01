@@ -5,12 +5,13 @@ import android.app.*;
 import java.util.*;
 import com.goldsprite.appdevframework.utils.*;
 
-public class Project{
-	
+public class Project
+{
+
 	public static String gdPath = "/sdcard/goldspriteProjects/";
 	public static String projName = "defaultLog";
-	public static String ProjName(){ return projName; }
-	public static String ProjPath(){ return gdPath + ProjName() + "/"; }
+	public static String ProjName() { return projName; }
+	public static String ProjPath() { return gdPath + ProjName() + "/"; }
 	public static int maxLogCount = 10;
 	public static String logPath = "";
 	/*
@@ -18,32 +19,34 @@ public class Project{
 	 如果启动，直接返回路径
 	 */
 	//以下垃圾代码
-	public static String NewLogPath(){
-		String logParentPath = ProjPath()+"logs/";
+	public static String NewLogPath() {
+		String logParentPath = ProjPath() + "logs/";
 		boolean launched = !logPath.isEmpty();
-		if (launched){
+		if (launched) {
 			//AppLog.toast("追加log");
 			return logPath;
 		}
 		String[] lists = new File(logParentPath).list();
-		Arrays.sort(lists, new Comparator<String>(){
-				@Override
-				public int compare(String o1, String o2) {
-					int ret = StringUtils.natureOrderCompare(o1, o2);
-					return ret;
-				}
-		});
-		if (lists == null || lists.length == 0){
+		if (lists != null && lists.length > 0) {
+			Arrays.sort(lists, new Comparator<String>(){
+					@Override
+					public int compare(String o1, String o2) {
+						int ret = StringUtils.natureOrderCompare(o1, o2);
+						return ret;
+					}
+				});
+		}
+		if (lists == null || lists.length == 0) {
 			return logPath = logParentPath + "logs_0.txt";
 		}
 		//删除多于10个的logs
-		int removeCount = Math.max(0, lists.length-maxLogCount);
-		for(int i=0;i<removeCount;i++){
+		int removeCount = Math.max(0, lists.length - maxLogCount);
+		for (int i=0;i < removeCount;i++) {
 			String removePath = logParentPath + lists[i];
 			new File(removePath).delete();
 		}
 		int maxIndex = 0;
-		for (String i : lists){
+		for (String i : lists) {
 			int logIndex = i.lastIndexOf("logs_");
 			int pointIndex = i.lastIndexOf(".");
 			int num = Integer.parseInt(i.substring(logIndex + 5, pointIndex));

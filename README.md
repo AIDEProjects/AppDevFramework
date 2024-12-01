@@ -1,7 +1,7 @@
-# AppDevFramework 0.4.1
-简易AndroidApp开发库框架
-
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
+
+# AppDevFramework 0.5.0
+简易AndroidApp开发库框架
 
 # 待办: 
 - 手势管理器
@@ -11,7 +11,12 @@
 - - 缩放为以视图中心为原点
 
 # 更新
-## 0.4.x
+## 0.5.0
+- 修复空logs报错
+- log在无权限时自动禁用
+- 补上子线程的异常捕获
+
+## 0.4.0
 - 增加StringUtils用于字符串自然排序
 - 修复了NewLogPath的获取bug：现在会删除旧的log而不是最新的
 - Vector2增加四则(两常量参数)

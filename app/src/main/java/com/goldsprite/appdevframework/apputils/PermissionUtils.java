@@ -38,7 +38,7 @@ public class PermissionUtils
 	//请求文件权限
 	public void requestAllPermission() {
 		List<String> retPerms = new ArrayList<>();
-		if (!isStoragePermissionDeclared(ctx, retPerms)) {
+		if (!isStoragePermissionDeclared(ctx, retPerms, permissions)) {
 			AppLog.dialog("申请权限失败", "AndroidManifest清单未声明以下权限: \n" + String.join("\n", retPerms), exitToast, exitToast);
 			return;
 		}
@@ -176,7 +176,7 @@ public class PermissionUtils
 		}
 	}
 
-	public boolean hasExternalStoragePermission() {
+	public static boolean hasExternalStoragePermission() {
 		boolean ret = true;
 		try {
 			String path = "/sdcard/" + System.currentTimeMillis() + "_" + (int)(new Random().nextDouble() * 10000) + ".txt";
@@ -190,7 +190,7 @@ public class PermissionUtils
 		return ret;
 	}
 
-	public boolean isStoragePermissionDeclared(Context context, List<String> retPerms) {
+	public static boolean isStoragePermissionDeclared(Context context, List<String> retPerms, String[] permissions) {
 		String errMsg = "";
 		errMsg += ("检查权限清单声明");
 		errMsg += "\n";

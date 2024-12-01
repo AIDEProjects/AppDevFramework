@@ -12,6 +12,8 @@ public class Log
 	
 	public final static Map<Enum, Boolean> banTags = new LinkedHashMap<Enum, Boolean>();
 	
+	public static boolean hasSavePerm = true;
+	
 	
 	public static boolean isTagHide(Enum tag){
 		if(banTags.containsKey(tag) && banTags.get(tag).equals(true)) return true;

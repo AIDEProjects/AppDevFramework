@@ -6,6 +6,7 @@ import android.widget.*;
 import java.io.*;
 import com.goldsprite.appdevframework.*;
 import com.goldsprite.appdevframework.io.*;
+import com.goldsprite.appdevframework.apputils.*;
 
 public class AppLog {
 
@@ -112,6 +113,9 @@ public class AppLog {
 	}
 	public static void saveLog(String log) {
 		try {
+			if(!Log.hasSavePerm){
+				return;
+			}
 			boolean isMkdirs = true;
 			boolean isAppend = true;
 			FilesTool.writeString(Project.NewLogPath(), log, isMkdirs, isAppend);
