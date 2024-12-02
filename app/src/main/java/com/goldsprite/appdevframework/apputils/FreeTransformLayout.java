@@ -78,7 +78,7 @@ public class FreeTransformLayout extends FrameLayout
 		Vector2 viewportCenter = gestureManager.getViewportSize().clone().div(2);
 		gestureManager.StagePos().set(viewportCenter);
 		gestureManager.StagePos().sub(gestureManager.getStageSize().clone().div(2));
-		gestureManager.updateStageSclOffset();
+		
 		gestureManager.constrainRealStagePos();
 		invalidate();
 	}

@@ -10,7 +10,7 @@ public abstract class GestureHandler implements View.OnTouchListener
 {
     private Vector2 stagePos = new Vector2().set(0); // 当前偏移
     public Vector2 realStagePos = new Vector2(0, 0);
-	
+
     private Vector2 stageSclOffset = new Vector2(0, 0);
     private float stageSclFactor = 1; // 当前缩放比例
 	public Vector2 StageSclOffset() {
@@ -126,7 +126,6 @@ public abstract class GestureHandler implements View.OnTouchListener
 					 stagePos.add(tickDoubleTranslate.scl(translateVelRate));
 					 */
 					stagePos.set(startCanvasPos).add(doubleTranslate);
-
 				}
 			}
 
@@ -145,9 +144,6 @@ public abstract class GestureHandler implements View.OnTouchListener
 					stageSclFactor = startCanvasScl * doubleDistanceDiff;
 					stageSclFactor = constrainScl(stageSclFactor);
 
-					//计算整个偏移
-					updateStageSclOffset();
-
 				}
 			}
 			//参数更新
@@ -157,7 +153,6 @@ public abstract class GestureHandler implements View.OnTouchListener
 			if (pointerCount == 1 && action == MotionEvent.ACTION_UP) {
 				pointerCount = 0;
 			}
-
 			constrainRealStagePos();
 			invalidate();
 		}
@@ -166,12 +161,40 @@ public abstract class GestureHandler implements View.OnTouchListener
 		}
         return true;
     }
-	
-	public void constrainRealStagePos(){
+
+	public void constrainRealStagePos() {
+		//计算整个偏移
+		updateStageSclOffset();
 		realStagePos.set(stagePos).add(stageSclOffset);
 		constrainMovement(realStagePos);
+		decomposeRealStagePos(realStagePos);
 	}
 
+	/*
+	 推导过程: 
+	 ．．实际舞台位置 = 舞台位置 + 舞台缩放位移
+	 ．．舞台位置 = (缩放视口中心 - 视口中心 - 实际舞台位置) / 缩放因子
+
+	 实际正确的: 
+	 ．．舞台位置 = (实际舞台位置 + 缩放视口中心 - 视口中心) / 缩放因子
+	 */
+	public void decomposeRealStagePos(Vector2 realStagePos) {
+		// 获取视口中心和缩放后的视口中心
+		Vector2 viewportCenter = getViewportSize().clone().div(2); // 视口中心
+		Vector2 sclViewportCenter = viewportCenter.clone().scl(stageSclFactor); // 缩放后的视口中心
+
+		// 根据公式计算 stagePos
+		if (stageSclFactor == 1) stagePos.set(realStagePos);
+		else {
+			stagePos.set(sclViewportCenter).sub(viewportCenter).sub(realStagePos).div(stageSclFactor);
+			stagePos.set(realStagePos).add(sclViewportCenter).sub(viewportCenter).div(stageSclFactor);
+		}
+		// 根据 stagePos 更新 stageSclOffset
+		updateStageSclOffset();
+		//Log.logf("realStagePos:%s, stagePos:%s, stageSclOffset:%s, 验算差:%s", realStagePos, stagePos, stageSclOffset, realStagePos.clone().add(stagePos).add(stageSclOffset));
+	}
+
+	//舞台缩放偏移 = 视口中心 - 缩放视口中心 + 舞台位置 * (缩放因子-1)
 	public void updateStageSclOffset() {
 		Vector2 viewportCenter = getViewportSize().clone().div(2);
 		Vector2 sclViewportCenter = viewportCenter.clone().scl(stageSclFactor);
