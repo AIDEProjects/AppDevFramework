@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.1
+# AppDevFramework 0.6.1-alpha
 简易AndroidApp开发库框架
 
 # 设计
