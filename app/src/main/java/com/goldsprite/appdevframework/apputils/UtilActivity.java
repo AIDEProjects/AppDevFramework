@@ -48,7 +48,6 @@ public abstract class UtilActivity extends Activity
 	//初始化主活动
 	private void initActivity() {
 		ctx = this;
-		AppLog.setCtx(ctx);
 		AppUtils.setCtx(ctx);
 		Project.projName = getAppName(this);
 

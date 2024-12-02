@@ -10,12 +10,6 @@ import com.goldsprite.appdevframework.apputils.*;
 
 public class AppLog {
 
-	private static Activity ctx;
-
-	public static void setCtx(Activity ctx) {
-		AppLog.ctx = ctx;
-	}
-
     //在短暂toast后结束应用
 	public static void finishWithToast(String str) {
 		try{
@@ -23,7 +17,7 @@ public class AppLog {
 			new Handler().postDelayed(
 				new Runnable(){
 					public void run() {
-						ctx.finish();
+						AppUtils.ctx.finish();
 					}
 				}, 
 				1000
@@ -35,10 +29,10 @@ public class AppLog {
 	public static void toast(Object strObj) {
 		try{
 			final String str = "" + strObj;
-			ctx.runOnUiThread(
+			AppUtils.ctx.runOnUiThread(
 				new Runnable(){
 					public void run() {
-						Toast.makeText(ctx, str, Toast.LENGTH_SHORT).show();
+						Toast.makeText(AppUtils.ctx, str, Toast.LENGTH_SHORT).show();
 					}
 				}
 			);
@@ -58,11 +52,11 @@ public class AppLog {
 		try{
 			final String title = "" + titleObj;
 			final String msg = "" + msgObj;
-			ctx.runOnUiThread(
+			AppUtils.ctx.runOnUiThread(
 				new Runnable(){
 					public void run() {
 						try {
-							AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+							AlertDialog.Builder builder = new AlertDialog.Builder(AppUtils.ctx);
 							builder.setTitle(title);
 							builder.setMessage(msg);
 							builder.setPositiveButton("确定", 

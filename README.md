@@ -1,16 +1,16 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.5.0
+# AppDevFramework 0.5.1
 简易AndroidApp开发库框架
 
 # 待办: 
-- 手势管理器
-- - 更新区分缩放与位移方式由指间距变为角度差
-- - 增加屏幕大小设定以决定位移量
-- - 增加Align属性区分LEFTDOWN与CENTER对齐
-- - 缩放为以视图中心为原点
 
 # 更新
+## 0.5.1
+1. 修复无Save权限ctx不能用的问题
+- - 将多个ctx合并到一个AppUtils.setCtx中
+
+
 ## 0.5.0
 - 修复空logs报错
 - log在无权限时自动禁用
