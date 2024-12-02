@@ -1,11 +1,25 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.5.1
+# AppDevFramework 0.5.2
 简易AndroidApp开发库框架
+
+# 设计
+1. 手势处理器：一个支持双指移动缩放视图的触摸处理器
+- - 获取当前位移Translate()
+- - 获取当前缩放Scale()
+- - 设置位移限制Margin()
+- - 设置缩放限制ScaleLimit()
 
 # 待办: 
 
 # 更新
+## 0.5.2
+1. 创建多Activity结构
+- - ActivityList增加手势处理器演示
+1. 开发手势处理器
+- - FreeTransformLayout自由变换布局
+- - GestureHandler手势滑动缩放处理，限制边界
+
 ## 0.5.1
 1. 修复无Save权限ctx不能用的问题
 - - 将多个ctx合并到一个AppUtils.setCtx中
