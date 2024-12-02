@@ -47,7 +47,7 @@ public class SampleListManager
         listView.setAdapter(adapter);
 
 		// 设置点击事件
-		var itemListener = new AdapterView.OnItemClickListener() {
+		AdapterView.OnItemClickListener itemListener = new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				try{
