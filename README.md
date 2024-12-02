@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.0
+# AppDevFramework 0.6.1
 简易AndroidApp开发库框架
 
 # 设计
@@ -13,6 +13,8 @@
 # 待办: 
 
 # 更新
+## 0.6.1: 修复api问题var
+
 ## 0.6.0: 解决限制边不完善的问题
 1. 创建了decomposeRealStagePos()来反推分离出stagePos与stageSclOffset以解决constrain没有实际限制stagePos的问题
 
