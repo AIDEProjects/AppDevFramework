@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.5
+# AppDevFramework 0.6.5.1-beta
 简易AndroidApp开发库框架
 
 # 当前内容
@@ -29,7 +29,9 @@
 - 将activity_transform.xml加入库
 
 # 更新
-## 0.6.5: 改名SampleListBuilder, 增加DebugActivityLayoutBuilder
+## 0.6.5.1-beta: 修复子线程调用logView通知更新问题
+
+## 0.6.5-alpha: 改名SampleListBuilder, 增加DebugActivityLayoutBuilder
 
 ## 0.6.4-alpha: 修复杂项bug与优化问题
 1. Log更新

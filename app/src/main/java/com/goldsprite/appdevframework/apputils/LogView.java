@@ -57,8 +57,8 @@ public class LogView extends CustomListView {
 		}
 		
 		if(instance == null) return;
-		instance.logAdapter.notifyDataSetChanged();
 		instance.post(new Runnable(){public void run() {
+					instance.logAdapter.notifyDataSetChanged();
 					int count = instance.logAdapter.getCount();
 					instance.setSelection(count-1);
 				}});
