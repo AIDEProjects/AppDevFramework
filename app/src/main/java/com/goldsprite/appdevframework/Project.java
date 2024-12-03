@@ -7,7 +7,6 @@ import com.goldsprite.appdevframework.utils.*;
 
 public class Project
 {
-
 	public static String gdPath = "/sdcard/goldspriteProjects/";
 	public static String projName = "defaultLog";
 	public static String ProjName() { return projName; }
