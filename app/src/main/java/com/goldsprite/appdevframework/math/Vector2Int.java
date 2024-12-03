@@ -3,9 +3,9 @@ package com.goldsprite.appdevframework.math;
 public class Vector2Int extends Vector2 {
 	public int x, y;
 	public float getX() { return x; }
-	public void setX(float x) { this.x = (int)x; }
+	public void setX(float x) { super.x = this.x = (int)x; }
 	public float getY() { return y; }
-	public void setY(float y) { this.y = (int)y; }
+	public void setY(float y) { super.y = this.y = (int)y; }
 
 
 	public Vector2Int(){ this(0, 0); }

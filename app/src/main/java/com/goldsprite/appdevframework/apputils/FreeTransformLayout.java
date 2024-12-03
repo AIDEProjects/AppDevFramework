@@ -10,8 +10,10 @@ import android.util.AttributeSet;
 import android.content.res.*;
 import com.goldsprite.appdevframework.R;
 
-public class FreeTransformLayout extends FrameLayout
-{
+public class FreeTransformLayout extends FrameLayout {
+	public enum TAG {
+		LifeCycle
+		}
 	private GestureHandler gestureManager;
 	private GestureHandler.GestureListener listener;
 	private Paint paint;
@@ -39,6 +41,7 @@ public class FreeTransformLayout extends FrameLayout
 
 	private void init(Context ctx) { init(ctx, null); }
 	private void init(Context ctx, AttributeSet attrs) {
+		Log.logT(TAG.LifeCycle, "init开始初始化");
 		boolean enableViewportGesture = false;
 		boolean enableViewportGestureConstrain = false;
 		boolean inCenter = false;
@@ -55,7 +58,7 @@ public class FreeTransformLayout extends FrameLayout
 					R.styleable.FreeTransformLayout_enableViewportGesture, true);
 				enableViewportGestureConstrain = a.getBoolean(
 					R.styleable.FreeTransformLayout_enableViewportGestureConstrain, true);
-				
+
 //				// 获取 gravity 属性并检查是否为 CENTER
 //				int gravity = a.getInt(android.R.attr.gravity, -1);
 				// 直接从 attrs 获取 gravity 属性
@@ -65,8 +68,15 @@ public class FreeTransformLayout extends FrameLayout
 					inCenter = true;
 				}
 
-			}
-			finally {
+				Log.logT(
+					TAG.LifeCycle, ""
+					+ "获取attrs: "
+					+ "\n\tenableViewportGesture: %s"
+					+ "\n\tenableViewportGestureConstrain: %s"
+					+ "\n\tinCenter: %s", 
+					enableViewportGesture, enableViewportGestureConstrain, inCenter
+				);
+			} finally {
 				a.recycle();
 			}
 		}
@@ -80,7 +90,7 @@ public class FreeTransformLayout extends FrameLayout
 			public boolean hasView() {
 				return true;
 			}
-			public Vector2 getStageSize() {
+			public Vector2Int getStageSize() {
 				View child0 = getChildAt(0);
 				stageSize.set(child0.getWidth(), child0.getHeight());
 				return stageSize;
@@ -110,25 +120,47 @@ public class FreeTransformLayout extends FrameLayout
 			cfg.enableScl = true;
 		}
 		gestureManager = new GestureHandler(listener, cfg);
-		
+
 		final boolean inCenter2 = inCenter;
 		post(new Runnable(){public void run() {
-					Log.log("getViewportSize: " + listener.getViewportSize());
-					Log.log("getStageSize: " + listener.getStageSize());
-					Log.log("StagePos: " + gestureManager.StagePos());
-					if(inCenter2) moveToViewportCenter();
-				}});
+
+					Log.logT(
+						TAG.LifeCycle, ""
+						+ "布局已准备: "
+						+ "\n\tgetViewportSize: %s"
+						+ "\n\tgetStageSize: %s", 
+						listener.getViewportSize(), listener.getStageSize()
+					);
+					if (inCenter2) moveToViewportCenter();
+
+					Log.logT(TAG.LifeCycle, "布局初始化完成");
+				}}
+		);
+
 	}
 
 	private void moveToViewportCenter() {
+		String str = "";
+		str += "启用InCenter";
 		Vector2 viewportCenter = listener.getViewportSize().clone().div(2);
 		Vector2 initPos = new Vector2(viewportCenter);
 		initPos.sub(listener.getStageSize().clone().div(2));
 
 		gestureManager.realStagePos.set(initPos);
+		str += String.format(
+			"\n\t初始值: \n\t\t视口中心: %s, \n\t\tinitPos: %s, \n\t\trealStagePos: %s", 
+			viewportCenter, initPos, gestureManager.realStagePos);
+
+		gestureManager.decomposeRealStagePos(gestureManager.realStagePos);
 		gestureManager.constrainRealStagePos();
-		translate(initPos.x, initPos.y);
+		translate(gestureManager.realStagePos.x, gestureManager.realStagePos.y);
+		str += String.format(
+			"\n\t限制后: \n\t\tinitPos: %s, \n\t\trealStagePos: %s", 
+			initPos, gestureManager.realStagePos);
+
 		invalidate();
+		str += "\n\t视图刷新";
+		Log.logT(GestureHandler.TAG.InCenter, str);
 	}
 
 	@Override

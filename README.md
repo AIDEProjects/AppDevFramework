@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.3
+# AppDevFramework 0.6.4
 简易AndroidApp开发库框架
 
 # 当前内容
@@ -26,8 +26,26 @@
 1. StringUtils: 字符串工具类，用于自然字符排序等
 
 # 待办: 
+- 将activity_transform.xml加入库
 
 # 更新
+## 0.6.4: 修复杂项bug与优化问题
+1. Log更新
+	- 取消Logf..统一为Log...
+	- Log()方法将带\n多行log前缀加上tagName
+	- 整理banTags列表，将内置Log由TAG分类并在初始化时设置show or ban
+	- 增加几处LogT: 
+	- - FreeTransformLayout的初始化日志
+	- - GestureHandler的InCenter配置日志，与约束位移日志
+1. LogView更新
+	- 将log排列由逆序重新改回顺序排列并自动滑动置底部
+1. 增加debug_activity_main.xml调试布局
+1. 将LogView与DebugView字体改小以便显示更多信息
+1. StringUtils增加获取enumFullName方法
+1. 修复Vector2Int的bug：
+	- 在V2Int被声明为V2时访问其xy会为0
+	- 修复：在setXY处同步设置super.xy即可
+
 ## 0.6.3: 重设计手势处理器接口
 
 ## 0.6.2: 自由变换布局增加xml-attrs控制手势参数

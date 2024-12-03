@@ -47,18 +47,20 @@ public class LogView extends CustomListView {
 	public static void addLog(final String level, final String str) {
 		String[] strs = str.split("\n");
 		for(String i : strs){
-			logs.add(0, new LogEntry(level, String.format("[%d] %s", logsTick++, i)));
+			logs.add(new LogEntry(level, String.format("[%d] %s", logsTick++, i)));
 		}
 		if (logs.size() > maxLine) {
 			int len = logs.size()-maxLine;
 			for(int i2=0;i2<len;i2++){
-				logs.remove(logs.size()-1);
+				logs.remove(0);
 			}
 		}
 		
 		if(instance == null) return;
+		instance.logAdapter.notifyDataSetChanged();
 		instance.post(new Runnable(){public void run() {
-					instance.logAdapter.notifyDataSetChanged();
+					int count = instance.logAdapter.getCount();
+					instance.setSelection(count-1);
 				}});
 	}
 	public static void addErrLog(Throwable e) {

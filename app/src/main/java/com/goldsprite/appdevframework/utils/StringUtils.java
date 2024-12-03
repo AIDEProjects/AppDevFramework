@@ -2,6 +2,22 @@ package com.goldsprite.appdevframework.utils;
 
 public class StringUtils {
 	
+	public static <E extends Enum<E>> String getEnumFullName(E enumValue) {
+        if (enumValue == null) {
+            return null;
+        }
+
+        // 获取 enum 类的简单名称
+        String enumName = enumValue.getDeclaringClass().getSimpleName();
+        Class declaringClass = enumValue.getDeclaringClass().getDeclaringClass();
+		String declaringClassName = declaringClass==null ?"" :declaringClass.getSimpleName()+"_";
+        // 获取 enum 的名称
+        String enumConstantName = enumValue.name();
+
+        // 根据需求组合字符串, 这里使用了 '_' 下划线来连接
+        return declaringClassName+enumName + "_" + enumConstantName;
+    }
+	
 	public static int natureOrderCompare(String str1, String str2){
 		String[] parts1 = splitByNumberAndText(str1);
 		String[] parts2 = splitByNumberAndText(str2);

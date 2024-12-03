@@ -6,8 +6,15 @@ import com.goldsprite.appdevframework.apputils.*;
 import android.app.*;
 import com.goldsprite.appdevframework.log.*;
 
-public class GestureHandler
-{
+public class GestureHandler {
+
+	public enum TAG {
+		InCenter, ConstrainTranslate
+		}
+
+	private Vector2 sclMinMaxLimit = new Vector2(0.3f, 6f);
+	public Vector2 SclMinMaxLimit(){ return sclMinMaxLimit; }
+
 	private Vector2 stagePos = new Vector2().set(0); // 当前偏移
 	public Vector2 realStagePos = new Vector2(0, 0);
 	public Vector2 lastRealStagePos = new Vector2(0, 0);
@@ -26,8 +33,7 @@ public class GestureHandler
 	}
 
 	protected CFG cfg;
-	public static class CFG
-	{
+	public static class CFG {
 		public boolean constrainMovement;
 		public boolean constrainScl;
 		public boolean enableTranslate;
@@ -45,10 +51,9 @@ public class GestureHandler
 
     private final GestureListener listener;
 
-    public interface GestureListener
-	{
+    public interface GestureListener {
 		boolean hasView();
-		Vector2 getStageSize();
+		Vector2Int getStageSize();
 		Vector2Int getViewportSize();
         void onDoublePointerMove(float dx, float dy);
         void onScale(float setScale);
@@ -121,7 +126,6 @@ public class GestureHandler
 				realDoubleDistance = doubleDistance - Math.signum(diff) * doubleSclDeadZone;
 			}
 
-
 			if (cfg.enableTranslate) {
 				if (action == MotionEvent.ACTION_POINTER_2_DOWN) {
 					startDoubleFocusPos.set(doubleFocusPos);
@@ -131,9 +135,6 @@ public class GestureHandler
 				if (action == MotionEvent.ACTION_MOVE) {
 					doubleTranslate.set(doubleFocusPos).sub(startDoubleFocusPos).div(stageSclFactor);
 					stagePos.set(startCanvasPos).add(doubleTranslate);
-					
-					constrainRealStagePos();
-					listener.onDoublePointerMove(realStagePos.x, realStagePos.y);
 				}
 			}
 			if (cfg.enableScl) {
@@ -146,25 +147,32 @@ public class GestureHandler
 					stageSclFactor = startCanvasScl * doubleDistanceDiff;
 					stageSclFactor = constrainScl(stageSclFactor);
 
-					constrainRealStagePos();
 					listener.onScale(stageSclFactor);
 
 				}
 			}
 
-		}
-		catch (Throwable e) {
+			constrainRealStagePos();
+			listener.onDoublePointerMove(realStagePos.x, realStagePos.y);
+
+		} catch (Throwable e) {
 			AppLog.dialogE("onTouch", e);
 		}
 		return true;
 	}
 
 	public void constrainRealStagePos() {
-		//计算整个偏移
+		Log.logT(TAG.ConstrainTranslate, "限制移动位置: ");
+		Log.logT(TAG.ConstrainTranslate, "\t当前位移位置stagePos: %s", stagePos);
+		Log.logT(TAG.ConstrainTranslate, "\t当前缩放偏移位置stageSclOffset: %s", stageSclOffset);
 		updateStageSclOffset();
+		Log.logT(TAG.ConstrainTranslate, "\t计算后缩放偏移位置updateStageSclOffset: %s", stageSclOffset);
 		realStagePos.set(stagePos).add(stageSclOffset);
+		Log.logT(TAG.ConstrainTranslate, "\t计算后实际位移位置realStagePos: %s", realStagePos);
 		constrainMovement(realStagePos);
+		Log.logT(TAG.ConstrainTranslate, "\t约束实际位移位置realStagePos: %s", realStagePos);
 		decomposeRealStagePos(realStagePos);
+		Log.logT(TAG.ConstrainTranslate, "\trealStagePos反解，stagePos: %s, stageSclOffset: %s", realStagePos, stagePos, stageSclOffset);
 	}
 
 	/*
@@ -204,9 +212,14 @@ public class GestureHandler
 	///TODO: 增加Align标签: CENTER, LEFTDOWN
 	private void constrainMovement(Vector2 canvasPos) {
 		if (!cfg.constrainMovement) return;
+		Log.logT(TAG.ConstrainTranslate, "\t约束位置constrainMovement");
 
-		Vector2 sSize = listener.getStageSize();
-		Vector2 vSize = listener.getViewportSize();
+		Vector2Int sSize = listener.getStageSize();
+		Log.logT(TAG.ConstrainTranslate, "\t\tstageSize: %s", sSize);
+		Vector2Int vSize = listener.getViewportSize();
+		Log.logT(TAG.ConstrainTranslate, "\t\tviewportSize: %s", vSize);
+
+		Log.logT(TAG.ConstrainTranslate, "\t\t是否有子布局: %s", listener.hasView());
 		if (listener.hasView()) {
 			float childWidth = sSize.x * stageSclFactor;
 			float childHeight = sSize.y * stageSclFactor;
@@ -215,10 +228,19 @@ public class GestureHandler
 			float xMax = vSize.x - childWidth - margin;
 			float yMin = margin;
 			float yMax = vSize.y - childHeight - margin;
+			Log.logT(TAG.ConstrainTranslate, "\t\t限制参数: ");
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tstageSclFactor: %s", stageSclFactor);
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tchildWidth: %s, childHeight: %s", childWidth, childHeight);
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tmargin: %s", margin);
+			Log.logT(TAG.ConstrainTranslate, "\t\t\txMin: %s, xMax: %s", xMin, xMax);
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tyMin: %s, yMax: %s", yMin, yMax);
 
 			// 确保内容在滑动时留出 100 像素的空间
 			//宽高小于视图
-			if (childWidth <= vSize.x && childHeight <= vSize.y) {
+			boolean isOutofView = childWidth > vSize.x || childHeight > vSize.y;
+			Log.logT(TAG.ConstrainTranslate, "\t\t宽高是否超出视图: %s", isOutofView);
+			Log.logT(TAG.ConstrainTranslate, "\t\t约束前位置canvasPos: %s", canvasPos);
+			if (!isOutofView) {
 				canvasPos.x = Math.max(canvasPos.x, xMin);//左边
 				canvasPos.x = Math.min(canvasPos.x, xMax);//右边
 				canvasPos.y = Math.max(canvasPos.y, yMin);//顶部
@@ -229,12 +251,13 @@ public class GestureHandler
 				canvasPos.x = Math.max(xMax, Math.min(xMin, canvasPos.x));
 				canvasPos.y = Math.max(yMax, Math.min(yMin, canvasPos.y));
 			}
+			Log.logT(TAG.ConstrainTranslate, "\t\t约束后位置canvasPos: %s", canvasPos);
 		}
 	}
 	private float constrainScl(float scl) {
 		if (!cfg.constrainScl) return scl;
 
-		return Math.max(0.1f, Math.min(5f, scl));
+		return Math.max(sclMinMaxLimit.x, Math.min(sclMinMaxLimit.y, scl));
 	}
 
     private float calculateDistance(MotionEvent event) {
