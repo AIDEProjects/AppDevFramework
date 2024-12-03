@@ -12,7 +12,11 @@ import com.goldsprite.appdevframework.log.*;
 public class LogView extends CustomListView {
 	private static LogView instance;
 	private Context ctx;
-	private List<LogEntry> logs;
+	private static List<LogEntry> logs;
+	static{
+		logs = new ArrayList<>();
+		logs.add(new LogEntry("Log-Info..."));
+	}
 	private LogAdapter logAdapter;
 	public static int maxLine = 200;
 	private static int logsTick;
@@ -33,8 +37,6 @@ public class LogView extends CustomListView {
 		
 		//setFocusable(false);
 		setDivider(null);
-		logs = new ArrayList<>();
-		logs.add(new LogEntry("Log-Info..."));
 		logAdapter = new LogAdapter(ctx, R.layout.list_item_log, logs);
 		setAdapter(logAdapter);
 	}
@@ -43,19 +45,19 @@ public class LogView extends CustomListView {
 		addLog("v", str);
 	}
 	public static void addLog(final String level, final String str) {
-		if(instance == null) return;
+		String[] strs = str.split("\n");
+		for(String i : strs){
+			logs.add(0, new LogEntry(level, String.format("[%d] %s", logsTick++, i)));
+		}
+		if (logs.size() > maxLine) {
+			int len = logs.size()-maxLine;
+			for(int i2=0;i2<len;i2++){
+				logs.remove(logs.size()-1);
+			}
+		}
 		
+		if(instance == null) return;
 		instance.post(new Runnable(){public void run() {
-					String[] strs = str.split("\n");
-					for(String i : strs){
-						instance.logs.add(0, new LogEntry(level, String.format("[%d] %s", logsTick++, i)));
-					}
-					if (instance.logs.size() > maxLine) {
-						int len = instance.logs.size()-maxLine;
-						for(int i2=0;i2<len;i2++){
-							instance.logs.remove(instance.logs.size()-1);
-						}
-					}
 					instance.logAdapter.notifyDataSetChanged();
 				}});
 	}
