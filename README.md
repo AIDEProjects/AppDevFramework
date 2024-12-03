@@ -5,18 +5,18 @@
 
 # 当前内容
 1. UtilActivity: 主活动基类
-- - 自动初始化日志选项
-- - 自带读写权限请求配置, 无标题栏配置
-1. Project与Res: 
-- - Project: 用于项目初始配置，包括ProjName, LogPath等
-- - Res: 一些路径静态常量
+	- 自动初始化日志选项
+	- 自带读写权限请求配置, 无标题栏配置
+1. Project与Res:
+	- Project: 用于项目初始配置，包括ProjName, LogPath等
+	- Res: 一些路径静态常量
 1. AppLog与Log与Logcat
-- - AppLog用于程序内日志toast与dialog, dialogE
-- - Log用于存储本地Log
-- - Logcat用于打印logcat以及检查程序Fatal异常日志
+	- AppLog用于程序内日志toast与dialog, dialogE
+	- Log用于存储本地Log
+	- Logcat用于打印logcat以及检查程序Fatal异常日志
 1. LogView与DebugView
-- - LogView用于程序内显示日志列表信息
-- - DebugView用于程序内显示调试项信息
+	- LogView用于程序内显示日志列表信息
+	- DebugView用于程序内显示调试项信息
 1. 手势处理器：一个支持双指移动缩放视图的触摸处理器
 1. 自由变换布局: 基于手势处理器的FrameLayout布局实现
 1. Vector2/Vector2Int: 封装完善的2d向量操作方法，包括float与Int型，Vec2Int实现于Vec2是其孪生类
@@ -41,14 +41,14 @@
 
 ## 0.5.2: 重新增加手势处理器与其Frame布局实现
 1. 创建多Activity结构
-- - ActivityList增加手势处理器演示
+	- ActivityList增加手势处理器演示
 1. 开发手势处理器
-- - FreeTransformLayout自由变换布局
-- - GestureHandler手势滑动缩放处理，限制边界
+	- FreeTransformLayout自由变换布局
+	- GestureHandler手势滑动缩放处理，限制边界
 
 ## 0.5.1
 1. 修复无Save权限ctx不能用的问题
-- - 将多个ctx合并到一个AppUtils.setCtx中
+	- 将多个ctx合并到一个AppUtils.setCtx中
 
 
 ## 0.5.0
