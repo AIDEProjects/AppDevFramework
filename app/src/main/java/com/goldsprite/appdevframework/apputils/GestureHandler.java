@@ -31,7 +31,6 @@ public abstract class GestureHandler implements View.OnTouchListener
 		public boolean constrainScl = true;
 		public boolean enableTranslate = true;
 		public boolean enableScl = true;
-		public boolean enableSclWithFocusCenter=false;
 	}
 
 	public abstract void invalidate();

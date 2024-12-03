@@ -7,6 +7,8 @@ import android.widget.*;
 import com.goldsprite.appdevframework.math.*;
 import com.goldsprite.appdevframework.log.*;
 import android.util.AttributeSet;
+import android.content.res.*;
+import com.goldsprite.appdevframework.R;
 
 public class FreeTransformLayout extends FrameLayout
 {
@@ -21,15 +23,30 @@ public class FreeTransformLayout extends FrameLayout
 
 	public FreeTransformLayout(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		init(context);
+		init(context, attrs);
 	}
 
 	public FreeTransformLayout(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
-		init(context);
+		init(context, attrs);
 	}
 
-	private void init(Context ctx) {
+	private void init(Context ctx) { init(ctx, null); }
+	private void init(Context ctx, AttributeSet attrs) {
+		boolean enableViewportGesture = false;
+		boolean enableViewportGestureConstrain = false;
+		if (attrs != null) {
+			TypedArray a = getContext().getTheme().obtainStyledAttributes(
+				attrs, R.styleable.FreeTransformLayout, 
+				0, 0);
+			try {
+				enableViewportGesture = a.getBoolean(
+					R.styleable.FreeTransformLayout_enableViewportGesture, true);
+				enableViewportGestureConstrain = a.getBoolean(
+					R.styleable.FreeTransformLayout_enableViewportGestureConstrain, true);
+			} finally {}
+		}
+
 		paint = new Paint();
 		paint.setColor(Color.RED);
 		paint.setStyle(Paint.Style.STROKE);
@@ -60,10 +77,18 @@ public class FreeTransformLayout extends FrameLayout
 			}
 		};
 		GestureHandler.CFG cfg = gestureManager.cfg;
-		cfg.enableTranslate = true;
-		cfg.constrainMovement = true;
-		cfg.enableScl = true;
-		cfg.constrainScl = true;
+		cfg.enableTranslate = false;
+		cfg.enableScl = false;
+		cfg.constrainMovement = false;
+		cfg.constrainScl = false;
+		if (enableViewportGesture) {
+			if(enableViewportGestureConstrain){
+				cfg.constrainMovement = true;
+				cfg.constrainScl = true;
+			}
+			cfg.enableTranslate = true;
+			cfg.enableScl = true;
+		}
 		setOnTouchListener(gestureManager);
 
 		post(new Runnable(){public void run() {
@@ -78,7 +103,7 @@ public class FreeTransformLayout extends FrameLayout
 		Vector2 viewportCenter = gestureManager.getViewportSize().clone().div(2);
 		gestureManager.StagePos().set(viewportCenter);
 		gestureManager.StagePos().sub(gestureManager.getStageSize().clone().div(2));
-		
+
 		gestureManager.constrainRealStagePos();
 		invalidate();
 	}

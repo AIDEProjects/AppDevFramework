@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.1-alpha
+# AppDevFramework 0.6.2
 简易AndroidApp开发库框架
 
 # 设计
@@ -13,6 +13,10 @@
 # 待办: 
 
 # 更新
+## 0.6.2: 自由变换布局增加xml-attrs控制手势参数
+1. app:enableViewportGesture="true"
+2. app:enableViewportGestureConstrain="false"
+
 ## 0.6.1: 修复api问题var
 
 ## 0.6.0: 解决限制边不完善的问题
