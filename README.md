@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.4
+# AppDevFramework 0.6.4-alpha
 简易AndroidApp开发库框架
 
 # 当前内容
@@ -29,7 +29,7 @@
 - 将activity_transform.xml加入库
 
 # 更新
-## 0.6.4: 修复杂项bug与优化问题
+## 0.6.4-alpha: 修复杂项bug与优化问题
 1. Log更新
 	- 取消Logf..统一为Log...
 	- Log()方法将带\n多行log前缀加上tagName
