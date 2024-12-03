@@ -27,9 +27,9 @@ public abstract class UtilActivity extends Activity
 
 	protected abstract void initOptions();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		try {
 			Thread.setDefaultUncaughtExceptionHandler(
 				new Thread.UncaughtExceptionHandler(){
@@ -44,7 +44,7 @@ public abstract class UtilActivity extends Activity
 		catch (Exception e) {
 			AppLog.dialogE("启动主活动代码异常", e);
 		}
-    }
+	}
 	//初始化主活动
 	private void initActivity() {
 		ctx = this;
@@ -163,17 +163,17 @@ public abstract class UtilActivity extends Activity
 
 
 	private String getAppName(Context context) {
-        PackageManager packageManager = context.getPackageManager();
-        ApplicationInfo applicationInfo;
-        try {
-            applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
-            return packageManager.getApplicationLabel(applicationInfo).toString();
-        }
+		PackageManager packageManager = context.getPackageManager();
+		ApplicationInfo applicationInfo;
+		try {
+			applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
+			return packageManager.getApplicationLabel(applicationInfo).toString();
+		}
 		catch (PackageManager.NameNotFoundException e) {
 			AppLog.dialogE("获取appName失败", e);
-            return null;
-        }
-    }
+			return null;
+		}
+	}
 
 }
 

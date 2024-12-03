@@ -8,18 +8,18 @@ import com.goldsprite.appdevframework.log.*;
 
 public abstract class GestureHandler implements View.OnTouchListener
 {
-    private Vector2 stagePos = new Vector2().set(0); // 当前偏移
-    public Vector2 realStagePos = new Vector2(0, 0);
+	private Vector2 stagePos = new Vector2().set(0); // 当前偏移
+	public Vector2 realStagePos = new Vector2(0, 0);
 
-    private Vector2 stageSclOffset = new Vector2(0, 0);
-    private float stageSclFactor = 1; // 当前缩放比例
+	private Vector2 stageSclOffset = new Vector2(0, 0);
+	private float stageSclFactor = 1; // 当前缩放比例
 	public Vector2 StageSclOffset() {
 		return stageSclOffset;
 	}
 
-    public Vector2 StagePos() { return stagePos; }
-    public float StageSclFactor() { return stageSclFactor; }
-    public Vector2 DoubleFocusPos() { 
+	public Vector2 StagePos() { return stagePos; }
+	public float StageSclFactor() { return stageSclFactor; }
+	public Vector2 DoubleFocusPos() { 
 		Vector2 focus = getViewportSize().clone().div(2);
 		return focus;
 	}
@@ -57,7 +57,7 @@ public abstract class GestureHandler implements View.OnTouchListener
 	doubleTranslate = new Vector2(), 
 	lastDoubleFocusPos = new Vector2(), 
 	tickDoubleTranslate = new Vector2();
-    Vector2 startCanvasPos = new Vector2();
+	Vector2 startCanvasPos = new Vector2();
 	float doubleFocusMovementAngle;
 	//距离
 	float 
@@ -73,8 +73,9 @@ public abstract class GestureHandler implements View.OnTouchListener
 	Vector2 startViewportOrigin = Vector2.zero();
 	Vector2 startCanvasOrigin = Vector2.zero();
 	@Override
-    public boolean onTouch(View v, MotionEvent ev) {
-		try {
+	public boolean onTouch(View v, MotionEvent ev) {
+		try
+		{
 
 			int action = ev.getAction();
 			pointerCount = ev.getPointerCount();
@@ -82,7 +83,8 @@ public abstract class GestureHandler implements View.OnTouchListener
 
 			singleFocusPos.set(ev.getX(0), ev.getY(0));//单指坐标
 
-			if (pointerCount >= 2) {
+			if (pointerCount >= 2)
+			{
 				doubleFocusPos.set(
 					ev.getX(0) + (ev.getX(1) - ev.getX(0)) / 2f,
 					ev.getY(0) + (ev.getY(1) - ev.getY(0)) / 2f
@@ -91,33 +93,40 @@ public abstract class GestureHandler implements View.OnTouchListener
 					Math.pow(ev.getX(1) - ev.getX(0) , 2)
 					+ Math.pow(ev.getY(1) - ev.getY(0), 2));
 				diff = doubleDistance - startDoubleDistance;
-				if (Math.abs(diff) < doubleSclDeadZone) {
+				if (Math.abs(diff) < doubleSclDeadZone)
+				{
 					realDoubleDistance = startDoubleDistance;
 				}
-				else {
+				else
+				{
 					realDoubleDistance = doubleDistance - Math.signum(diff) * doubleSclDeadZone;
 				}
 			}
 
-			if (action == MotionEvent.ACTION_DOWN) {
+			if (action == MotionEvent.ACTION_DOWN)
+			{
 				startSingleFocusPos.set(singleFocusPos);
 			}
 			String log_scl = "\n";
 			log_scl += "缩放相关log:";
 			log_scl += "焦点屏幕位置: " + doubleFocusPos;
 
-			if (action == MotionEvent.ACTION_MOVE) {
+			if (action == MotionEvent.ACTION_MOVE)
+			{
 				//lastSingleFocusPos.set(singleFocusPos);
 			}
-			if (cfg.enableTranslate) {
+			if (cfg.enableTranslate)
+			{
 				//双指滑动: 按下
-				if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN) {
+				if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN)
+				{
 					startDoubleFocusPos.set(doubleFocusPos);
 					startCanvasPos.set(stagePos);
 					lastDoubleFocusPos.set(doubleFocusPos);
 				}
 				//双指滑动: 滑动
-				if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
+				if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE)
+				{
 					doubleTranslate.set(doubleFocusPos).sub(startDoubleFocusPos).div(stageSclFactor);
 
 					/*
@@ -129,16 +138,19 @@ public abstract class GestureHandler implements View.OnTouchListener
 				}
 			}
 
-			if (cfg.enableScl) {
+			if (cfg.enableScl)
+			{
 				//双指缩放: 按下
-				if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN) {
+				if (pointerCount == 2 && action == MotionEvent.ACTION_POINTER_2_DOWN)
+				{
 					startDoubleDistance = doubleDistance;
 					startCanvasScl = stageSclFactor;
 					lastStageSclFactor = stageSclFactor;
 					startCanvasOrigin = stagePos.clone();
 				}
 				//双指缩放: 缩放
-				if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE) {
+				if (pointerCount == 2 && action == MotionEvent.ACTION_MOVE)
+				{
 					doubleDistanceDiff = realDoubleDistance / startDoubleDistance;
 
 					stageSclFactor = startCanvasScl * doubleDistanceDiff;
@@ -150,17 +162,19 @@ public abstract class GestureHandler implements View.OnTouchListener
 			lastDoubleFocusPos.set(doubleFocusPos);
 
 			//全部抬起
-			if (pointerCount == 1 && action == MotionEvent.ACTION_UP) {
+			if (pointerCount == 1 && action == MotionEvent.ACTION_UP)
+			{
 				pointerCount = 0;
 			}
 			constrainRealStagePos();
 			invalidate();
 		}
-		catch (Throwable e) {
+		catch (Throwable e)
+		{
 			AppLog.dialogE("onTouch", e);
 		}
-        return true;
-    }
+		return true;
+	}
 
 	public void constrainRealStagePos() {
 		//计算整个偏移
@@ -185,7 +199,8 @@ public abstract class GestureHandler implements View.OnTouchListener
 
 		// 根据公式计算 stagePos
 		if (stageSclFactor == 1) stagePos.set(realStagePos);
-		else {
+		else
+		{
 			stagePos.set(sclViewportCenter).sub(viewportCenter).sub(realStagePos).div(stageSclFactor);
 			stagePos.set(realStagePos).add(sclViewportCenter).sub(viewportCenter).div(stageSclFactor);
 		}
@@ -205,12 +220,13 @@ public abstract class GestureHandler implements View.OnTouchListener
 
 
 	///TODO: 增加Align标签: CENTER, LEFTDOWN
-    private void constrainMovement(Vector2 canvasPos) {
+	private void constrainMovement(Vector2 canvasPos) {
 		if (!cfg.constrainMovement) return;
 
-        if (hasView()) {
-            float childWidth = getStageSize().x * stageSclFactor;
-            float childHeight = getStageSize().y * stageSclFactor;
+		if (hasView())
+		{
+			float childWidth = getStageSize().x * stageSclFactor;
+			float childHeight = getStageSize().y * stageSclFactor;
 			int margin = 10;
 			float xMin = margin;
 			float xMax = getViewportSize().x - childWidth - margin;
@@ -219,19 +235,21 @@ public abstract class GestureHandler implements View.OnTouchListener
 
 			// 确保内容在滑动时留出 100 像素的空间
 			//宽高小于视图
-			if (childWidth <= getViewportSize().x && childHeight <= getViewportSize().y) {
+			if (childWidth <= getViewportSize().x && childHeight <= getViewportSize().y)
+			{
 				canvasPos.x = Math.max(canvasPos.x, xMin);//左边
 				canvasPos.x = Math.min(canvasPos.x, xMax);//右边
 				canvasPos.y = Math.max(canvasPos.y, yMin);//顶部
 				canvasPos.y = Math.min(canvasPos.y, yMax);//底部
 			}
 			//宽高超出视图
-			else {
+			else
+			{
 				canvasPos.x = Math.max(xMax, Math.min(xMin, canvasPos.x));
 				canvasPos.y = Math.max(yMax, Math.min(yMin, canvasPos.y));
 			}
-        }
-    }
+		}
+	}
 	private float constrainScl(float scl) {
 		if (!cfg.constrainScl) return scl;
 

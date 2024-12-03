@@ -14,28 +14,28 @@ public class FreeTransformLayout extends FrameLayout
 	private Paint paint;
 
 
-    public FreeTransformLayout(Context context) {
-        super(context);
-        init(context);
-    }
+	public FreeTransformLayout(Context context) {
+		super(context);
+		init(context);
+	}
 
-    public FreeTransformLayout(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
+	public FreeTransformLayout(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		init(context);
+	}
 
-    public FreeTransformLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init(context);
-    }
+	public FreeTransformLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+		super(context, attrs, defStyleAttr);
+		init(context);
+	}
 
-    private void init(Context ctx) {
+	private void init(Context ctx) {
 		paint = new Paint();
 		paint.setColor(Color.RED);
 		paint.setStyle(Paint.Style.STROKE);
 		paint.setStrokeWidth(6);
 
-        gestureManager = new GestureHandler(){
+		gestureManager = new GestureHandler(){
 			@Override
 			public void invalidate() {
 				FreeTransformLayout.this.invalidate();
@@ -72,7 +72,7 @@ public class FreeTransformLayout extends FrameLayout
 					test();
 					Log.log("StagePos: " + gestureManager.StagePos());
 				}});
-    }
+	}
 
 	private void test() {
 		Vector2 viewportCenter = gestureManager.getViewportSize().clone().div(2);
@@ -83,19 +83,19 @@ public class FreeTransformLayout extends FrameLayout
 		invalidate();
 	}
 
-    @Override
-    protected void dispatchDraw(Canvas canvas) {
-        canvas.save();
+	@Override
+	protected void dispatchDraw(Canvas canvas) {
+		canvas.save();
 		Vector2 pos = gestureManager.realStagePos;
-        canvas.translate(pos.x, pos.y);
-        canvas.scale(gestureManager.StageSclFactor(), gestureManager.StageSclFactor());
-        super.dispatchDraw(canvas);
+		canvas.translate(pos.x, pos.y);
+		canvas.scale(gestureManager.StageSclFactor(), gestureManager.StageSclFactor());
+		super.dispatchDraw(canvas);
 		canvas.restore();
 
 		float circleRadius = 15;
 		canvas.drawCircle(gestureManager.DoubleFocusPos().x, gestureManager.DoubleFocusPos().y, circleRadius, paint);
 
-    }
+	}
 }
 
 

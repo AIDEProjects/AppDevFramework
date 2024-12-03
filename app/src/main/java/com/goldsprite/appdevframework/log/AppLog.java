@@ -10,7 +10,7 @@ import com.goldsprite.appdevframework.apputils.*;
 
 public class AppLog {
 
-    //在短暂toast后结束应用
+	//在短暂toast后结束应用
 	public static void finishWithToast(String str) {
 		try{
 			toast(str);

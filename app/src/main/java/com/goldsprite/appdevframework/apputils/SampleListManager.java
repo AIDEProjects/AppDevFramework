@@ -15,36 +15,36 @@ import com.goldsprite.appdevframework.log.*;
 
 public class SampleListManager
 {
-    private final Context context;
-    private final ListView listView;
+	private final Context context;
+	private final ListView listView;
 
-    public SampleListManager(Context context, ListView listView) {
-        this.context = context;
-        this.listView = listView;
-    }
+	public SampleListManager(Context context, ListView listView) {
+		this.context = context;
+		this.listView = listView;
+	}
 
-    public void initSampleList(Object... samples) {
-        if (samples.length % 2 != 0) {
-            throw new IllegalArgumentException("Arguments must be in pairs of String and Class.");
-        }
+	public void initSampleList(Object... samples) {
+		if (samples.length % 2 != 0) {
+			throw new IllegalArgumentException("Arguments must be in pairs of String and Class.");
+		}
 
-        // 构建 Map
-        final Map<String, Class<? extends Activity>> sampleMap = new LinkedHashMap<>();
-        for (int i = 0; i < samples.length; i += 2) {
-            String name = (String) samples[i];
+		// 构建 Map
+		final Map<String, Class<? extends Activity>> sampleMap = new LinkedHashMap<>();
+		for (int i = 0; i < samples.length; i += 2) {
+			String name = (String) samples[i];
 			Class<? extends Activity> clazz = (Class<? extends Activity>) samples[i + 1];
-            sampleMap.put(name, clazz);
-        }
+			sampleMap.put(name, clazz);
+		}
 
-        // 提取选项
-        String[] options = sampleMap.keySet().toArray(new String[0]);
+		// 提取选项
+		String[] options = sampleMap.keySet().toArray(new String[0]);
 
-        // 设置适配器
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+		// 设置适配器
+		ArrayAdapter<String> adapter = new ArrayAdapter<String>(
 			context, 
 			android.R.layout.simple_list_item_1, 
 			options);
-        listView.setAdapter(adapter);
+		listView.setAdapter(adapter);
 
 		// 设置点击事件
 		AdapterView.OnItemClickListener itemListener = new AdapterView.OnItemClickListener() {
@@ -65,6 +65,6 @@ public class SampleListManager
 		};
 		listView.setOnItemClickListener(itemListener);
 		
-    }
+	}
 }
 

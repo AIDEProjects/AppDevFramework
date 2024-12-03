@@ -1,8 +1,8 @@
 package com.goldsprite.appdevframework.utils;
 
 public class StringUtils {
-    
-    public static int natureOrderCompare(String str1, String str2){
+	
+	public static int natureOrderCompare(String str1, String str2){
 		String[] parts1 = splitByNumberAndText(str1);
 		String[] parts2 = splitByNumberAndText(str2);
 
@@ -46,5 +46,5 @@ public class StringUtils {
 		String pattern = "\\d+";
 		return str.matches(pattern);
 	}
-    
+	
 }

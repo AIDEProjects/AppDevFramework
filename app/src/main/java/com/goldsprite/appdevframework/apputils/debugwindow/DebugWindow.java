@@ -38,7 +38,7 @@ public class DebugWindow {
 	private static DebugWindow.Hierarchy hierarchy;
 
 
-    public DebugWindow(Activity ctx) {
+	public DebugWindow(Activity ctx) {
 		this.ctx = ctx;
 		instance = this;
 		hierarchy = new Hierarchy();
