@@ -13,12 +13,12 @@ import java.util.Map;
 import android.R;
 import com.goldsprite.appdevframework.log.*;
 
-public class SampleListManager
+public class SampleListBuilder
 {
 	private final Context context;
 	private final ListView listView;
 
-	public SampleListManager(Context context, ListView listView) {
+	public SampleListBuilder(Context context, ListView listView) {
 		this.context = context;
 		this.listView = listView;
 	}
