@@ -11,10 +11,7 @@
 		android:background="#AAAAAA"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"
-		android:layout_centerInParent="true"
-		app:enableViewportGesture="true"
-		app:enableViewportGestureConstrain="true"
-		android:gravity="center">
+		android:layout_centerInParent="true">
 	</LinearLayout>
 
 	<com.goldsprite.appdevframework.apputils.LogView

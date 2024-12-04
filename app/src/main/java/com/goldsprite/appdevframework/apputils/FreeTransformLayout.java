@@ -14,7 +14,7 @@ public class FreeTransformLayout extends FrameLayout {
 	public enum TAG {
 		LifeCycle
 		}
-	private GestureHandler gestureManager;
+	private GestureHandler gestureHandler;
 	private GestureHandler.GestureListener listener;
 	private Paint paint;
 
@@ -119,7 +119,7 @@ public class FreeTransformLayout extends FrameLayout {
 			cfg.enableTranslate = true;
 			cfg.enableScl = true;
 		}
-		gestureManager = new GestureHandler(listener, cfg);
+		gestureHandler = new GestureHandler(listener, cfg);
 
 		final boolean inCenter2 = inCenter;
 		post(new Runnable(){public void run() {
@@ -146,17 +146,17 @@ public class FreeTransformLayout extends FrameLayout {
 		Vector2 initPos = new Vector2(viewportCenter);
 		initPos.sub(listener.getStageSize().clone().div(2));
 
-		gestureManager.realStagePos.set(initPos);
+		gestureHandler.realStagePos.set(initPos);
 		str += String.format(
 			"\n\t初始值: \n\t\t视口中心: %s, \n\t\tinitPos: %s, \n\t\trealStagePos: %s", 
-			viewportCenter, initPos, gestureManager.realStagePos);
+			viewportCenter, initPos, gestureHandler.realStagePos);
 
-		gestureManager.decomposeRealStagePos(gestureManager.realStagePos);
-		gestureManager.constrainRealStagePos();
-		translate(gestureManager.realStagePos.x, gestureManager.realStagePos.y);
+		gestureHandler.decomposeRealStagePos(gestureHandler.realStagePos);
+		gestureHandler.constrainRealStagePos();
+		translate(gestureHandler.realStagePos.x, gestureHandler.realStagePos.y);
 		str += String.format(
 			"\n\t限制后: \n\t\tinitPos: %s, \n\t\trealStagePos: %s", 
-			initPos, gestureManager.realStagePos);
+			initPos, gestureHandler.realStagePos);
 
 		invalidate();
 		str += "\n\t视图刷新";
@@ -165,7 +165,7 @@ public class FreeTransformLayout extends FrameLayout {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		boolean handle = gestureManager.handleTouchEvent(event);
+		boolean handle = gestureHandler.handleTouchEvent(event);
 		if (handle) {
 			invalidate();
 			return true;
@@ -183,7 +183,7 @@ public class FreeTransformLayout extends FrameLayout {
 		canvas.restore();
 
 		float circleRadius = 15;
-		canvas.drawCircle(gestureManager.DoubleFocusPos().x, gestureManager.DoubleFocusPos().y, circleRadius, paint);
+		canvas.drawCircle(gestureHandler.DoubleFocusPos().x, gestureHandler.DoubleFocusPos().y, circleRadius, paint);
 
 	}
 

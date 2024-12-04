@@ -4,37 +4,85 @@ import java.io.*;
 import com.goldsprite.appdevframework.apputils.*;
 import java.util.*;
 import com.goldsprite.appdevframework.utils.*;
+import java.util.concurrent.locks.*;
+import android.os.*;
+import java.util.concurrent.*;
 
 public class Log {
-	public enum TAG {
-		Default
-		}
+	public enum TAG { Default }
 
-	public final static Map<Enum, Boolean> banTags = new LinkedHashMap<Enum, Boolean>(){
-		{
-			put(GestureHandler.TAG.InCenter, false);
-			put(GestureHandler.TAG.ConstrainTranslate, true);
-			put(FreeTransformLayout.TAG.LifeCycle, false);
-		}
-	};
+	public final static Map<Enum, Integer> showTags = new LinkedHashMap<Enum, Integer>();
 
 	public static boolean hasSavePerm = true;
 
+	private static boolean viewOutput = true;
+	public static void setViewOutput(boolean boo) { viewOutput = boo; }
 
-	public static boolean isTagHide(Enum tag) {
-		if (banTags.containsKey(tag) && banTags.get(tag).equals(true)) return true;
-		return false;
+	private static int logsTick;
+
+	private static ConcurrentLinkedQueue<Runnable> addLogQueue = new ConcurrentLinkedQueue<>();
+	private static Handler addLogHandler;
+
+
+	static {
+		showTags.put(TAG.Default, LogMode.encodeMode(true, true));
+		showTags.put(GestureHandler.TAG.InCenter, LogMode.encodeMode(false, false));
+		showTags.put(GestureHandler.TAG.ConstrainTranslate, LogMode.encodeMode(false, false));
+		showTags.put(FreeTransformLayout.TAG.LifeCycle, LogMode.encodeMode(true, true));
+		showTags.put(LogView.TAG.LogAdd, LogMode.encodeMode(false, false));//此项禁止视图显示会造成循环调用
+
+		addLogHandler = new Handler(Looper.getMainLooper());
 	}
 
 
-	public static void logT(Enum tag, String log) {
-		if (isTagHide(tag)) return;
+	public static void logT(final Enum tag, final String log) {
+		Runnable addLogTask = new Runnable(){
+			public void run() {
+				logTTask(tag, log);
+			}
+		};
+		addLogQueue.offer(addLogTask);
+
+		Runnable first = addLogQueue.poll();
+		if (first != null) addLogHandler.post(first);
+	}
+
+	private static void logTTask(Enum tag, String log) {
+		Integer tagMode = showTags.get(tag);
+		if (tagMode == null) return;
+
 		String tagName = StringUtils.getEnumFullName(tag);
-		log = log.replace("\n", String.format("\n[%s]: ", tagName));
+
+		// tag前缀
 		log = String.format("[%s]: %s", tagName, log);
-		LogView.addLog(log);
-		AppLog.saveLog(log);
+		log = log.replace("\n", String.format("\n[%s]: ", tagName));
+		/*
+		//加行号
+		String[] strs = log.split("\n");
+		String formatLog = "";
+		for (int i=0;i < strs.length;i++) {
+			String iStr = strs[i];
+			String turnLine = i == strs.length - 1 ?"" : "\n";
+			formatLog += String.format("[%d] %s%s", logsTick, iStr, turnLine);
+		}
+		logsTick++;
+		log = formatLog;
+		*/
+		// 在View模式下输出日志
+		if (LogMode.isViewMode(tagMode)) {
+			LogView.addLog(log);
+		}
+		// 在本地模式下保存日志
+		if (LogMode.isLocalMode(tagMode)) {
+			//加时间戳
+			String timeStamp = StringUtils.getFormatTimeStamp("HH:mm:ss:SSS");
+			log = String.format("[%s]: %s", timeStamp, log);
+			log = log.replace("\n", String.format("\n[%s]: ", timeStamp));
+			AppLog.saveLog(log);
+		}
+
 	}
+
 	public static void logT(Enum tag, String log, Object... objs) {
 		try {
 			log = String.format(log, objs);
@@ -80,6 +128,37 @@ public class Log {
 		StringWriter sw = new StringWriter();
 		e.printStackTrace(new PrintWriter(sw));
 		return sw.toString();
+	}
+
+
+	public static class LogMode {
+		// 定义两个模式的位标志
+		public static final int VIEW_MODE = 1 << 0;  // 位0
+		public static final int LOCAL_MODE = 1 << 1; // 位1
+
+		// 编码：将多个标志存入一个 int 中
+		public static int encodeModeAll(boolean all) {
+			return encodeMode(all, all);
+		}
+		public static int encodeMode(boolean local, boolean view) {
+			int mode = 0;
+			if (view) {
+				mode |= VIEW_MODE;  // 将 VIEW_MODE 的位设置为 1
+			}
+			if (local) {
+				mode |= LOCAL_MODE; // 将 LOCAL_MODE 的位设置为 1
+			}
+			return mode;
+		}
+
+		// 解码：从一个 int 中提取各个标志位的值
+		public static boolean isViewMode(int mode) {
+			return (mode & VIEW_MODE) != 0;  // 如果位0为1，则表示启用
+		}
+
+		public static boolean isLocalMode(int mode) {
+			return (mode & LOCAL_MODE) != 0; // 如果位1为1，则表示启用
+		}
 	}
 
 }

@@ -33,6 +33,7 @@ public class GestureHandler {
 	}
 
 	protected CFG cfg;
+	public CFG Cfg(){ return cfg; }
 	public static class CFG {
 		public boolean constrainMovement;
 		public boolean constrainScl;

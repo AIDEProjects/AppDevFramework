@@ -1,12 +1,26 @@
 package com.goldsprite.appdevframework.utils;
+import java.time.*;
+import java.time.format.*;
 
 public class StringUtils {
+	public static String getFormatTimeStamp(){
+		return getFormatTimeStamp("yyyy-MM-dd HH:mm:ss:SSS");
+	}
+	public static String getFormatTimeStamp(String format){
+		
+		// 获取当前时间
+        LocalDateTime now = LocalDateTime.now();
+        // 定义时间格式，左右加上方括号
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        // 格式化时间
+        String formattedTime = String.format("%s", now.format(formatter));
+		return formattedTime;
+	}
 	
 	public static <E extends Enum<E>> String getEnumFullName(E enumValue) {
         if (enumValue == null) {
             return null;
         }
-
         // 获取 enum 类的简单名称
         String enumName = enumValue.getDeclaringClass().getSimpleName();
         Class declaringClass = enumValue.getDeclaringClass().getDeclaringClass();
@@ -15,7 +29,7 @@ public class StringUtils {
         String enumConstantName = enumValue.name();
 
         // 根据需求组合字符串, 这里使用了 '_' 下划线来连接
-        return declaringClassName+enumName + "_" + enumConstantName;
+        return declaringClassName/* + enumName + "_"*/ + enumConstantName;
     }
 	
 	public static int natureOrderCompare(String str1, String str2){
