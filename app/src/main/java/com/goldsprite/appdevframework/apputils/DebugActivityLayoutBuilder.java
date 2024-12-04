@@ -6,10 +6,10 @@ import android.app.*;
 import android.view.*;
 
 public class DebugActivityLayoutBuilder {
-	private View myLayoutView;
-	public View MyLayoutView() { return myLayoutView; }
+	private View mLayoutView;
+	public View MLayoutView() { return mLayoutView; }
 
-	public DebugActivityLayoutBuilder(final Activity ctx, final View gameView, final Runnable initRun) {
+	public DebugActivityLayoutBuilder(final Activity ctx, final View mainView, final Runnable initRun) {
 		final LinearLayout layout = (LinearLayout) ctx.findViewById(R.id.debugActivityLayout);
 		Runnable initLayout = new Runnable(){
 			public void run() {
@@ -19,21 +19,21 @@ public class DebugActivityLayoutBuilder {
 				lp.addRule(RelativeLayout.CENTER_IN_PARENT);
 				layout.setLayoutParams(lp);
 
-				myLayoutView = gameView;
+				mLayoutView = mainView;
 				LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(
 					LinearLayout.LayoutParams.MATCH_PARENT, 
 					LinearLayout.LayoutParams.MATCH_PARENT);
-				myLayoutView.setLayoutParams(lp2);
-				layout.addView(myLayoutView);
+				mLayoutView.setLayoutParams(lp2);
+				layout.addView(mLayoutView);
 
-				if (initRun != null) myLayoutView.post(initRun);
+				if (initRun != null) mLayoutView.post(initRun);
 			}
 		};
 		layout.post(initLayout);
 	}
 
-	public DebugActivityLayoutBuilder(final Activity ctx, final View gameView) {
-		this(ctx, gameView, null);
+	public DebugActivityLayoutBuilder(final Activity ctx, final View mainView) {
+		this(ctx, mainView, null);
 	}
 
 	public DebugActivityLayoutBuilder(final Activity ctx, final int layoutId, final Runnable initRun) {

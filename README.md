@@ -30,7 +30,7 @@
 - 将activity_transform.xml加入库
 
 # 更新
-## 0.6.6: 
+## 0.6.6: 完善Log相关，增加一个简单的调试视图布局构建器
 1. 再次简化DebugActivityLayoutBuilder，现在可以简单new DebugActivityLayoutBuilder(ctx, gameView)即可
 1. 解决DebugView.setDebugInfo的线程问题以及整理调试log输出
 1. 自由变换布局gestureManager变量更名handler
