@@ -66,8 +66,8 @@ public class Log {
 		if (LogMode.isLocalMode(tagMode)) {
 			//加时间戳
 			String timeStamp = StringUtils.getFormatTimeStamp("HH:mm:ss:SSS");
-			log = String.format("[%s]: %s", timeStamp, log);
-			log = log.replace("\n", String.format("\n[%s]: ", timeStamp));
+			log = String.format("[%s] %s", timeStamp, log);
+			log = log.replace("\n", String.format("\n[%s] ", timeStamp));
 			AppLog.saveLog(log);
 		}
 
