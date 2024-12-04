@@ -18,22 +18,23 @@ public class Log {
 	private static boolean viewOutput = true;
 	public static void setViewOutput(boolean boo) { viewOutput = boo; }
 
-	private static int logsTick;
-
 	private static ConcurrentLinkedQueue<Runnable> addLogQueue = new ConcurrentLinkedQueue<>();
 	private static Handler addLogHandler;
 
-
+	
 	static {
-		showTags.put(TAG.Default, LogMode.encodeMode(true, true));
-		showTags.put(GestureHandler.TAG.InCenter, LogMode.encodeMode(false, false));
-		showTags.put(GestureHandler.TAG.ConstrainTranslate, LogMode.encodeMode(false, false));
-		showTags.put(FreeTransformLayout.TAG.LifeCycle, LogMode.encodeMode(true, true));
-		showTags.put(LogView.TAG.LogAdd, LogMode.encodeMode(false, false));//此项禁止视图显示会造成循环调用
-
+		initShowTags();
 		addLogHandler = new Handler(Looper.getMainLooper());
 	}
 
+	private static void initShowTags() {
+		setTagMode(TAG.Default, true, true);
+		setTagMode(GestureHandler.TAG.InCenter, false, false);
+		setTagMode(GestureHandler.TAG.ConstrainTranslate, false, false);
+		setTagMode(FreeTransformLayout.TAG.LifeCycle, true, true);
+		setTagMode(LogView.TAG.LogAdd, false, false); // 此项禁止视图显示会造成循环调用
+	}
+	
 
 	public static void logT(final Enum tag, final String log) {
 		Runnable addLogTask = new Runnable(){
@@ -56,18 +57,7 @@ public class Log {
 		// tag前缀
 		log = String.format("[%s]: %s", tagName, log);
 		log = log.replace("\n", String.format("\n[%s]: ", tagName));
-		/*
-		//加行号
-		String[] strs = log.split("\n");
-		String formatLog = "";
-		for (int i=0;i < strs.length;i++) {
-			String iStr = strs[i];
-			String turnLine = i == strs.length - 1 ?"" : "\n";
-			formatLog += String.format("[%d] %s%s", logsTick, iStr, turnLine);
-		}
-		logsTick++;
-		log = formatLog;
-		*/
+		
 		// 在View模式下输出日志
 		if (LogMode.isViewMode(tagMode)) {
 			LogView.addLog(log);
@@ -159,6 +149,14 @@ public class Log {
 		public static boolean isLocalMode(int mode) {
 			return (mode & LOCAL_MODE) != 0; // 如果位1为1，则表示启用
 		}
+	}
+
+	
+	public static void setTagModeAll(Enum tag, boolean all){
+		setTagMode(tag, all, all);
+	}
+	public static void setTagMode(Enum tag, boolean local, boolean view){
+		showTags.put(tag, LogMode.encodeMode(local, view));
 	}
 
 }

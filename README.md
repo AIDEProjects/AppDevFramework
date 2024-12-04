@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.6
+# AppDevFramework 0.6.6.1
 简易AndroidApp开发库框架
 
 # 当前内容
@@ -30,6 +30,8 @@
 - 将activity_transform.xml加入库
 
 # 更新
+## 0.6.6.1: 简化Log设置筛选模式方法为setTagMode(tag, local, view)
+
 ## 0.6.6: 完善Log相关，增加一个简单的调试视图布局构建器
 1. 再次简化DebugActivityLayoutBuilder，现在可以简单new DebugActivityLayoutBuilder(ctx, gameView)即可
 1. 解决DebugView.setDebugInfo的线程问题以及整理调试log输出
