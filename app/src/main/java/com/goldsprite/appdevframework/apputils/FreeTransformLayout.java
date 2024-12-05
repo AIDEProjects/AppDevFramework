@@ -18,10 +18,13 @@ public class FreeTransformLayout extends FrameLayout {
 	private GestureHandler.GestureListener listener;
 	private Paint paint;
 
-	private Vector2Int stageSize = new Vector2Int(), viewportSize = new Vector2Int();
+	private Vector2Int 
+	stageSize = new Vector2Int(), 
+	viewportSize = new Vector2Int(), 
+	coordSign = new Vector2Int();
 
 	private float scale = 1.0f;
-	private Vector2 translate = new Vector2().set(0f);
+	private Vector2 translation = new Vector2().set(0f);
 
 
 	public FreeTransformLayout(Context context) {
@@ -98,6 +101,10 @@ public class FreeTransformLayout extends FrameLayout {
 			public Vector2Int getViewportSize() {
 				viewportSize.set(getWidth(), getHeight());
 				return viewportSize;
+			}
+			public Vector2Int coordinatesSigned(){
+				coordSign.set(1, -1);
+				return coordSign;
 			}
 
 			public void onDoublePointerMove(float dx, float dy) {
@@ -176,8 +183,7 @@ public class FreeTransformLayout extends FrameLayout {
 	@Override
 	protected void dispatchDraw(Canvas canvas) {
 		canvas.save();
-		Vector2 pos = translate;
-		canvas.translate(pos.x, pos.y);
+		canvas.translate(translation.x, translation.y);
 		canvas.scale(scale, scale);
 		super.dispatchDraw(canvas);
 		canvas.restore();
@@ -188,7 +194,7 @@ public class FreeTransformLayout extends FrameLayout {
 	}
 
 	public void translate(float dx, float dy) {
-		translate.set(dx, dy);
+		translation.set(dx, dy);
 	}
 
 	public void setScale(float setScale) {

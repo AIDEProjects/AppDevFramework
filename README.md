@@ -1,6 +1,6 @@
 [![](https://jitpack.io/v/AIDEProjects/AppDevFramework.svg)](https://jitpack.io/#AIDEProjects/AppDevFramework)
 
-# AppDevFramework 0.6.6.1
+# AppDevFramework 0.6.8-alpha
 简易AndroidApp开发库框架
 
 # 当前内容
@@ -27,9 +27,33 @@
 1. StringUtils: 字符串工具类，用于格式化时间戳, 获取格式化枚举名, 自然字符排序等
 
 # 待办: 
-- 将activity_transform.xml加入库
+- 解决在新活动报错而报错dialog在旧活动看不见的问题: 
+	- 方法一: 使用applicationContext替代activityContext
+- 解决将float值字符串格式化时的精度问题：
+	- 问题1: %s小数点过多 0.79799449816...1e-8
+	- 问题2: %.1f丢失精度 0.0375被显示为0.0
+	- 期望显示为小数点
 
 # 更新
+## 0.6.8-alpha: 功能增强与优化
+- **DebugActivityLayoutBuilder**：重构构造函数，优化布局初始化，新增调试视图和日志视图控制方法，改进视图对齐方式。
+- **FreeTransformLayout**：新增坐标符号变量 `coordSign`，重命名变量为 `translation`，优化绘制和布局处理。
+- **GestureHandler**：增强手势事件日志记录，支持双指触摸缩放和位移，优化死区处理和坐标转换，改进缩放和位移约束。
+- **Log.java**：初始化 `RealtimeInfo` 标签。
+- **Vector2.java**：增强数值比较，新增 `getDirectionString` 方法。
+
+其他文件包括布局更新、文本显示优化等。
+
+## 0.6.7: 手势处理器增加一个输出操作细节的log
+	- 显示位移方向与距离与当前位置: 
+	- - direction: ↖/↘...
+	- - distance: 8/5...
+	- - realStagePos(是否被约束): 100, 100...
+	- 以及缩放操作(放大或缩小)与程度与当前因子: 
+	- - mode: +/-
+	- - sclDiff: 0.3/0.6...
+	- - stageSclFactor(是否被约束): 2/1.8...
+
 ## 0.6.6.1: 简化Log设置筛选模式方法为setTagMode(tag, local, view)
 
 ## 0.6.6: 完善Log相关，增加一个简单的调试视图布局构建器

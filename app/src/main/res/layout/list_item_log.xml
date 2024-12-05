@@ -10,7 +10,7 @@
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:padding="0dp"
-		android:textSize="8sp"
+		android:textSize="7sp"
 		android:typeface="monospace"
 		android:textColor="#FFFFFFFF"/>
 

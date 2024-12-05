@@ -116,14 +116,14 @@ public class Vector2
 
 
 	public boolean equals(Vector2 vec) {
-		return vec.getX() == this.getX() && vec.getY() == this.getY();
+		double epsilon = 1e-6; // 允许的误差范围
+		return Math.abs(getX() - vec.getX()) < epsilon &&
+			Math.abs(getY() - vec.getY()) < epsilon;
 	}
 
 	public boolean isZero() {
-		if (getX() != 0 || getY() != 0) {
-			return false;
-		}
-		return getX() * getY() < Math.pow(10, -6);
+		double epsilon = 1e-6; // 允许的误差范围
+		return Math.abs(getX()) < epsilon && Math.abs(getY()) < epsilon;
 	}
 
 	public Vector2 clone() {
@@ -136,7 +136,7 @@ public class Vector2
 
 	@Override
 	public String toString() {
-		return String.format("{%.1f, %.1f}", getX(), getY());
+		return String.format("{%s, %s}", MathUtils.preciNum(getX()), MathUtils.preciNum(getY()));
 	}
 
 	public Vector2Int toVector2Int() {
@@ -153,6 +153,14 @@ public class Vector2
 			angle += 360;
 		}
 		return (float)angle;
+	}
+	
+	public String getDirectionString() {
+		String dirChars = "→↗↑↖←↙↓↘"; // 按顺时针顺序排列
+		float angle = angle(); // 获取角度 (0-360)
+		float adjustedAngle = (angle + 22.5f) % 360; // 加 22.5 度偏移，以便映射到正确的区间
+		int index = (int)(adjustedAngle / 45); // 每 45 度一个区间，总共 8 个区间
+		return String.valueOf(dirChars.charAt(index)); // 根据索引返回方向符号
 	}
 
 

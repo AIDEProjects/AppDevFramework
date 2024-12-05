@@ -9,11 +9,11 @@ import com.goldsprite.appdevframework.log.*;
 public class GestureHandler {
 
 	public enum TAG {
-		InCenter, ConstrainTranslate
+		InCenter, ConstrainTranslate, RealtimeInfo
 		}
 
 	private Vector2 sclMinMaxLimit = new Vector2(0.3f, 6f);
-	public Vector2 SclMinMaxLimit(){ return sclMinMaxLimit; }
+	public Vector2 SclMinMaxLimit() { return sclMinMaxLimit; }
 
 	private Vector2 stagePos = new Vector2().set(0); // 当前偏移
 	public Vector2 realStagePos = new Vector2(0, 0);
@@ -33,12 +33,13 @@ public class GestureHandler {
 	}
 
 	protected CFG cfg;
-	public CFG Cfg(){ return cfg; }
+	public CFG Cfg() { return cfg; }
 	public static class CFG {
 		public boolean constrainMovement;
 		public boolean constrainScl;
 		public boolean enableTranslate;
 		public boolean enableScl;
+		public Vector2 pivot = Pivot.LeftDown;
 
 		public CFG() { allSet(true); }
 
@@ -56,6 +57,7 @@ public class GestureHandler {
 		boolean hasView();
 		Vector2Int getStageSize();
 		Vector2Int getViewportSize();
+		Vector2Int coordinatesSigned();
         void onDoublePointerMove(float dx, float dy);
         void onScale(float setScale);
     }
@@ -90,71 +92,127 @@ public class GestureHandler {
 	doubleTranslate = new Vector2(), 
 	lastDoubleFocusPos = new Vector2(), 
 	tickDoubleTranslate = new Vector2();
-	Vector2 startCanvasPos = new Vector2();
+	Vector2 startStagePos = new Vector2();
 	float doubleFocusMovementAngle;
 	//距离
 	float 
 	startDoubleDistance, 
 	doubleDistance, 
 	doubleDistanceDiff, 
-	doubleSclDeadZone = 60;
+	doubleSclDeadZone = 80;
 	//拉伸
-	float startCanvasScl, lastStageSclFactor;
+	float startStageScl, lastStageSclFactor;
 	//角度
 	float doubleFingerAngleDiff;
 	//视图
 	Vector2 startViewportOrigin = Vector2.zero();
 	Vector2 startCanvasOrigin = Vector2.zero();
+	private MotionEvent touchEvent;
+	Vector2 oldPos = new Vector2();
+	Vector2 transDiff = new Vector2(), finalTransDiff = new Vector2();
+	float doubleTransDeadZone = 20f;
+	boolean outDeadZone;
+	boolean sclOutDeadZone;
+	float translateVal;
 
 	public boolean handleTouchEvent(MotionEvent ev) {
 		try {
+			touchEvent = ev;
 			int action = ev.getAction();
 			pointerCount = ev.getPointerCount();
 			float realDoubleDistance=0, diff=0;
 
+			if (action == MotionEvent.ACTION_UP) {
+				outDeadZone = false;
+				//sclOutDeadZone = false;
+			}
+			
 			if (pointerCount != 2) return true;
-
+			
 			doubleFocusPos.set(
-				ev.getX(0) + (ev.getX(1) - ev.getX(0)) / 2f,
-				ev.getY(0) + (ev.getY(1) - ev.getY(0)) / 2f
+				getApplyTouchX(0) + (getApplyTouchX(1) - getApplyTouchX(0)) / 2f,
+				getApplyTouchY(0) + (getApplyTouchY(1) - getApplyTouchY(0)) / 2f
 			);
 			doubleDistance = calculateDistance(ev);
+			
+			//记录按下数据
+			if (action == MotionEvent.ACTION_POINTER_2_DOWN) {
+				startDoubleFocusPos.set(doubleFocusPos);
+				startStagePos.set(stagePos);
+				
+				startDoubleDistance = doubleDistance;
+				startStageScl = stageSclFactor;
+			}
+			
+			//计算位移距离，排除死区
+			transDiff.set(doubleFocusPos).sub(startDoubleFocusPos);
+			translateVal = Math.abs(transDiff.x) + Math.abs(transDiff.y);
+			if (!outDeadZone) {
+				outDeadZone = translateVal > doubleTransDeadZone;
+				doubleFocusPos.set(startDoubleFocusPos);
+				finalTransDiff.set(transDiff);
+			}else{
+				doubleFocusPos.sub(finalTransDiff);
+			}
+			//计算拉伸距离，排除死区
 			diff = doubleDistance - startDoubleDistance;
-			if (Math.abs(diff) < doubleSclDeadZone) {
+			sclOutDeadZone = Math.abs(diff) > doubleSclDeadZone;
+			if (!sclOutDeadZone) {
 				realDoubleDistance = startDoubleDistance;
 			}
 			else {
 				realDoubleDistance = doubleDistance - Math.signum(diff) * doubleSclDeadZone;
 			}
 
+			//计算位移
 			if (cfg.enableTranslate) {
-				if (action == MotionEvent.ACTION_POINTER_2_DOWN) {
-					startDoubleFocusPos.set(doubleFocusPos);
-					startCanvasPos.set(stagePos);
-				}
-
 				if (action == MotionEvent.ACTION_MOVE) {
 					doubleTranslate.set(doubleFocusPos).sub(startDoubleFocusPos).div(stageSclFactor);
-					stagePos.set(startCanvasPos).add(doubleTranslate);
+					tickDoubleTranslate.set(doubleFocusPos).sub(lastDoubleFocusPos);
+					lastDoubleFocusPos.set(doubleFocusPos);
+					stagePos.set(startStagePos).add(doubleTranslate);
 				}
 			}
+			//计算缩放
 			if (cfg.enableScl) {
-				if (action == MotionEvent.ACTION_POINTER_2_DOWN) {
-					startDoubleDistance = doubleDistance;
-					startCanvasScl = stageSclFactor;
-				}
 				if (action == MotionEvent.ACTION_MOVE) {
 					doubleDistanceDiff = realDoubleDistance / startDoubleDistance;
-					stageSclFactor = startCanvasScl * doubleDistanceDiff;
-					stageSclFactor = constrainScl(stageSclFactor);
-
-					listener.onScale(stageSclFactor);
-
+					stageSclFactor = startStageScl * doubleDistanceDiff;
 				}
 			}
 
-			constrainRealStagePos();
-			listener.onDoublePointerMove(realStagePos.x, realStagePos.y);
+			Log.logT(TAG.RealtimeInfo, "手势实时信息: ");
+			Log.logT(TAG.RealtimeInfo, "\t是否触发位移: %s, 位移量: %s/%s", outDeadZone, MathUtils.preciNum(translateVal), MathUtils.preciNum(doubleTransDeadZone));
+			Log.logT(TAG.RealtimeInfo, "\t是否触发缩放: %s, 缩放量: %s/%s", sclOutDeadZone, MathUtils.preciNum(diff), MathUtils.preciNum(doubleSclDeadZone));
+			if (action == MotionEvent.ACTION_MOVE) {
+				//限制并应用缩放
+				float oldScl = stageSclFactor;
+				stageSclFactor = constrainScl(stageSclFactor);
+				boolean isSclConstrain = oldScl != stageSclFactor;
+				listener.onScale(stageSclFactor);
+				
+				//限制并应用位移
+				boolean isConstrain = constrainRealStagePos();
+				listener.onDoublePointerMove(realStagePos.x, realStagePos.y);
+
+				String dirStr = doubleTranslate.getDirectionString();
+				float sclDiff = stageSclFactor - lastStageSclFactor;
+				float totalSclDiff = stageSclFactor - startStageScl;
+				lastStageSclFactor = stageSclFactor;
+				String sclingMode = sclDiff == 0 ?"0" : (sclDiff > 0 ?"+" : "-");
+				Log.logT(TAG.RealtimeInfo, "\t位移: ");
+				Log.logT(TAG.RealtimeInfo, "\t\t方向: %s", dirStr);
+				Log.logT(TAG.RealtimeInfo, "\t\t开始位置: %s", startStagePos);
+				Log.logT(TAG.RealtimeInfo, "\t\t步距离: %s", tickDoubleTranslate);
+				Log.logT(TAG.RealtimeInfo, "\t\t总距离: %s", doubleTranslate);
+				Log.logT(TAG.RealtimeInfo, "\t\t当前位置(%s): %s, 实际: %s", isConstrain ?"被约束": "未约束", stagePos, realStagePos);
+				Log.logT(TAG.RealtimeInfo, "\t缩放: ");
+				Log.logT(TAG.RealtimeInfo, "\t\t增减: %s", sclingMode);
+				Log.logT(TAG.RealtimeInfo, "\t\t开始因子: %s", MathUtils.preciNum(startStageScl));
+				Log.logT(TAG.RealtimeInfo, "\t\t步缩放量: %s", MathUtils.preciNum(sclDiff));
+				Log.logT(TAG.RealtimeInfo, "\t\t总缩放量: %s", MathUtils.preciNum(totalSclDiff));
+				Log.logT(TAG.RealtimeInfo, "\t\t当前因子(%s): %s", isSclConstrain ?"被约束": "未约束", MathUtils.preciNum(stageSclFactor));
+			}
 
 		} catch (Throwable e) {
 			AppLog.dialogE("onTouch", e);
@@ -162,18 +220,27 @@ public class GestureHandler {
 		return true;
 	}
 
-	public void constrainRealStagePos() {
+	public boolean constrainRealStagePos() {
 		Log.logT(TAG.ConstrainTranslate, "限制移动位置: ");
 		Log.logT(TAG.ConstrainTranslate, "\t当前位移位置stagePos: %s", stagePos);
 		Log.logT(TAG.ConstrainTranslate, "\t当前缩放偏移位置stageSclOffset: %s", stageSclOffset);
+
 		updateStageSclOffset();
 		Log.logT(TAG.ConstrainTranslate, "\t计算后缩放偏移位置updateStageSclOffset: %s", stageSclOffset);
+
 		realStagePos.set(stagePos).add(stageSclOffset);
 		Log.logT(TAG.ConstrainTranslate, "\t计算后实际位移位置realStagePos: %s", realStagePos);
-		constrainMovement(realStagePos);
+
+		boolean ret = constrainMovement(realStagePos);
 		Log.logT(TAG.ConstrainTranslate, "\t约束实际位移位置realStagePos: %s", realStagePos);
+
 		decomposeRealStagePos(realStagePos);
 		Log.logT(TAG.ConstrainTranslate, "\trealStagePos反解，stagePos: %s, stageSclOffset: %s", realStagePos, stagePos, stageSclOffset);
+
+		oldPos.set(realStagePos);
+		applyViewXY(realStagePos);
+		Log.logT(TAG.ConstrainTranslate, "\t坐标轴%s转换: applyViewXY(realPos): %s -> %s", listener.coordinatesSigned(), oldPos, realStagePos);
+		return ret;
 	}
 
 	/*
@@ -209,10 +276,9 @@ public class GestureHandler {
 		stageSclOffset.add(stagePosFactor);
 	}
 
-
-	///TODO: 增加Align标签: CENTER, LEFTDOWN
-	private void constrainMovement(Vector2 canvasPos) {
-		if (!cfg.constrainMovement) return;
+	private boolean constrainMovement(Vector2 canvasPos) {
+		if (!cfg.constrainMovement) return false;
+		oldPos = canvasPos.clone();
 		Log.logT(TAG.ConstrainTranslate, "\t约束位置constrainMovement");
 
 		Vector2Int sSize = listener.getStageSize();
@@ -230,11 +296,11 @@ public class GestureHandler {
 			float yMin = margin;
 			float yMax = vSize.y - childHeight - margin;
 			Log.logT(TAG.ConstrainTranslate, "\t\t限制参数: ");
-			Log.logT(TAG.ConstrainTranslate, "\t\t\tstageSclFactor: %s", stageSclFactor);
-			Log.logT(TAG.ConstrainTranslate, "\t\t\tchildWidth: %s, childHeight: %s", childWidth, childHeight);
-			Log.logT(TAG.ConstrainTranslate, "\t\t\tmargin: %s", margin);
-			Log.logT(TAG.ConstrainTranslate, "\t\t\txMin: %s, xMax: %s", xMin, xMax);
-			Log.logT(TAG.ConstrainTranslate, "\t\t\tyMin: %s, yMax: %s", yMin, yMax);
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tstageSclFactor: %s", MathUtils.preciNum(stageSclFactor));
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tchildWidth: %s, childHeight: %s", MathUtils.preciNum(childWidth), MathUtils.preciNum(childHeight));
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tmargin: %s", MathUtils.preciNum(margin));
+			Log.logT(TAG.ConstrainTranslate, "\t\t\txMin: %s, xMax: %s", MathUtils.preciNum(xMin), MathUtils.preciNum(xMax));
+			Log.logT(TAG.ConstrainTranslate, "\t\t\tyMin: %s, yMax: %s", MathUtils.preciNum(yMin), MathUtils.preciNum(yMax));
 
 			// 确保内容在滑动时留出 100 像素的空间
 			//宽高小于视图
@@ -254,18 +320,49 @@ public class GestureHandler {
 			}
 			Log.logT(TAG.ConstrainTranslate, "\t\t约束后位置canvasPos: %s", canvasPos);
 		}
+		return !canvasPos.equals(oldPos);
 	}
 	private float constrainScl(float scl) {
 		if (!cfg.constrainScl) return scl;
 
-		return Math.max(sclMinMaxLimit.x, Math.min(sclMinMaxLimit.y, scl));
+		float newScl = Math.max(sclMinMaxLimit.x, Math.min(sclMinMaxLimit.y, scl));
+		return newScl;
 	}
 
     private float calculateDistance(MotionEvent event) {
-        float dx = event.getX(1) - event.getX(0);
-        float dy = event.getY(1) - event.getY(0);
+        float dx = getApplyTouchX(1) - getApplyTouchX(0);
+        float dy = getApplyTouchY(1) - getApplyTouchY(0);
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
-}
+	//用于安卓屏幕坐标轴系(1,-1)转换到(1,1)左下至右上坐标系
+	private float getApplyTouchX(int pointer) {
+		float originX = touchEvent.getX(pointer);
+		float applyX = applyX(originX);
+		return applyX;
+	}
+	private float getApplyTouchY(int pointer) {
+		float originY = touchEvent.getY(pointer);
+		float applyY = applyY(originY);
+		return applyY;
+	}
+	private float applyX(float x) {
+		return x;
+	}
+	private float applyY(float y) {
+		return listener.getViewportSize().y - y;
+	}
+	private float applyViewX(float x) {
+		int sign = listener.coordinatesSigned().x;
+		return sign == 1 ?x : listener.getViewportSize().x - listener.getStageSize().x * stageSclFactor - x;
+	}
+	private float applyViewY(float y) {
+		int sign = listener.coordinatesSigned().y;
+		return sign == 1 ?y : listener.getViewportSize().y - listener.getStageSize().y * stageSclFactor - y;
+	}
+	private <T extends Vector2> T applyViewXY(T vec) {
+		vec.set(applyViewX(vec.x), applyViewY(vec.y));
+		return vec;
+	}
 
+}

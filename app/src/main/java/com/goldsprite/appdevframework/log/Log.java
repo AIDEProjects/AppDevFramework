@@ -31,8 +31,10 @@ public class Log {
 		setTagMode(TAG.Default, true, true);
 		setTagMode(GestureHandler.TAG.InCenter, false, false);
 		setTagMode(GestureHandler.TAG.ConstrainTranslate, false, false);
+		setTagMode(GestureHandler.TAG.RealtimeInfo, false, false);
 		setTagMode(FreeTransformLayout.TAG.LifeCycle, true, true);
 		setTagMode(LogView.TAG.LogAdd, false, false); // 此项禁止视图显示会造成循环调用
+		
 	}
 	
 

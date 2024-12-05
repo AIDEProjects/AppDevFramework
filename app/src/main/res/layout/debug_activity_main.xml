@@ -15,6 +15,7 @@
 	</LinearLayout>
 
 	<com.goldsprite.appdevframework.apputils.LogView
+		android:id="@+id/debugActivity_logView"
 		android:layout_width="340dp"
 		android:layout_height="190dp"
 		android:background="#00555555"
@@ -25,6 +26,7 @@
 		android:layout_below="@id/debugActivityLayout"/>
 
 	<com.goldsprite.appdevframework.apputils.DebugView
+		android:id="@+id/debugActivity_debugView"
 		android:layout_width="340dp"
 		android:layout_height="200dp"
 		android:background="#00555555"
