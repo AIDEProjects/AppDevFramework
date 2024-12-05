@@ -13,6 +13,7 @@
 1. AppLog与Log与Logcat
 	- AppLog用于程序内日志toast与dialog, dialogE
 	- Log用于存储本地Log
+	- - Log.setTagMode(tag, encodeMode)可设置标签可见性local/view
 	- Logcat用于打印logcat以及检查程序Fatal异常日志
 1. LogView与DebugView
 	- LogView用于程序内显示日志列表信息
@@ -25,14 +26,14 @@
 1. PrefUtils: 一个简单的sharedReferences数据方法封装
 1. FilesTool: 十分简单的文件操作封装，读写等
 1. StringUtils: 字符串工具类，用于格式化时间戳, 获取格式化枚举名, 自然字符排序等
+1. Angle类: 
+	- angleDifference(angle1, angle2)获取两角度方向差值用于判断是否为目标方向
+1. MathUtils: 
+	- preciNum(num, digit)获取保留digit位有效精度的四舍五入数
 
 # 待办: 
 - 解决在新活动报错而报错dialog在旧活动看不见的问题: 
 	- 方法一: 使用applicationContext替代activityContext
-- 解决将float值字符串格式化时的精度问题：
-	- 问题1: %s小数点过多 0.79799449816...1e-8
-	- 问题2: %.1f丢失精度 0.0375被显示为0.0
-	- 期望显示为小数点
 
 # 更新
 ## 0.6.8-alpha: 功能增强与优化
