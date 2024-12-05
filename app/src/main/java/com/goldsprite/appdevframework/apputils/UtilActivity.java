@@ -12,7 +12,7 @@ import java.util.*;
 import com.goldsprite.appdevframework.io.*;
 
 
-public abstract class UtilActivity extends Activity
+public class UtilActivity extends Activity
 {
 	private static UtilActivity ctx;
 	public static UtilActivity Instance() { return ctx; }
@@ -25,7 +25,7 @@ public abstract class UtilActivity extends Activity
 		public boolean requestExternalStoragePermission;
 	}
 
-	protected abstract void initOptions();
+	protected void initOptions(){}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -83,13 +83,15 @@ public abstract class UtilActivity extends Activity
 			requestPerm(perm);
 		}
 		else {
-			Log.hasSavePerm = false;
-			boolean toggle_NonSavePermTip = PrefsUtils.getPrefs().getBoolean("toggle_NonSavePermTip", false);
-			if (!toggle_NonSavePermTip) {
-				AppLog.dialog("", "无LogSavePerm, 储存log功能关闭.");
-				SharedPreferences.Editor editor = PrefsUtils.getPrefsEditor();
-				editor.putBoolean("toggle_NonSavePermTip", true);
-				editor.apply();
+			if(!PermissionUtils.hasExternalStoragePermission()){
+				Log.hasSavePerm = false;
+				boolean toggle_NonSavePermTip = PrefsUtils.getPrefs().getBoolean("toggle_NonSavePermTip", false);
+				if (!toggle_NonSavePermTip) {
+					AppLog.dialog("", "无LogSavePerm, 储存log功能关闭.");
+					SharedPreferences.Editor editor = PrefsUtils.getPrefsEditor();
+					editor.putBoolean("toggle_NonSavePermTip", true);
+					editor.apply();
+				}
 			}
 			onCreate0();
 		}
@@ -99,7 +101,7 @@ public abstract class UtilActivity extends Activity
 		new Thread(){public void run(){throw new RuntimeException("测试子线程异常");}}.start();
 	}
 
-	protected abstract void onCreate0();
+	protected void onCreate0(){}
 
 	protected void requestPerm(PermissionUtils perm) {
 		this.perm = perm;

@@ -108,7 +108,7 @@ public class FreeTransformLayout extends FrameLayout {
 			}
 
 			public void onDoublePointerMove(float dx, float dy) {
-				translate(dx, dy);
+				translation(dx, dy);
 				invalidate();
 			}
 			public void onScale(float setScale) {
@@ -160,7 +160,7 @@ public class FreeTransformLayout extends FrameLayout {
 
 		gestureHandler.decomposeRealStagePos(gestureHandler.realStagePos);
 		gestureHandler.constrainRealStagePos();
-		translate(gestureHandler.realStagePos.x, gestureHandler.realStagePos.y);
+		translation(gestureHandler.realStagePos.x, gestureHandler.realStagePos.y);
 		str += String.format(
 			"\n\t限制后: \n\t\tinitPos: %s, \n\t\trealStagePos: %s", 
 			initPos, gestureHandler.realStagePos);
@@ -190,11 +190,10 @@ public class FreeTransformLayout extends FrameLayout {
 
 		float circleRadius = 15;
 		canvas.drawCircle(gestureHandler.DoubleFocusPos().x, gestureHandler.DoubleFocusPos().y, circleRadius, paint);
-
 	}
 
-	public void translate(float dx, float dy) {
-		translation.set(dx, dy);
+	public void translation(float x, float y) {
+		translation.set(x, y);
 	}
 
 	public void setScale(float setScale) {

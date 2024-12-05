@@ -213,7 +213,7 @@ public class GestureHandler {
 				Log.logT(TAG.RealtimeInfo, "\t\t总缩放量: %s", MathUtils.preciNum(totalSclDiff));
 				Log.logT(TAG.RealtimeInfo, "\t\t当前因子(%s): %s", isSclConstrain ?"被约束": "未约束", MathUtils.preciNum(stageSclFactor));
 			}
-
+			
 		} catch (Throwable e) {
 			AppLog.dialogE("onTouch", e);
 		}

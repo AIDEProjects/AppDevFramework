@@ -1,0 +1,119 @@
+diff --git a/README.md b/README.md
+index 21005ce..a436931 100644
+--- a/README.md
++++ b/README.md
+@@ -36,6 +36,9 @@
+ 	- 方法一: 使用applicationContext替代activityContext
+ 
+ # 更新
++## 0.6.9: 解决新活动dialog看不见的问题
++	- 统一使用UtilActivity，这样就自动setCtx到新的活动了
++
+ ## 0.6.8-alpha: 功能增强与优化
+ - **DebugActivityLayoutBuilder**：重构构造函数，优化布局初始化，新增调试视图和日志视图控制方法，改进视图对齐方式。
+ - **FreeTransformLayout**：新增坐标符号变量 `coordSign`，重命名变量为 `translation`，优化绘制和布局处理。
+diff --git a/app/src/main/java/com/goldsprite/appdevframework/apputils/FreeTransformLayout.java b/app/src/main/java/com/goldsprite/appdevframework/apputils/FreeTransformLayout.java
+index 2c33ec7..f8ae783 100644
+--- a/app/src/main/java/com/goldsprite/appdevframework/apputils/FreeTransformLayout.java
++++ b/app/src/main/java/com/goldsprite/appdevframework/apputils/FreeTransformLayout.java
+@@ -108,7 +108,7 @@ public class FreeTransformLayout extends FrameLayout {
+ 			}
+ 
+ 			public void onDoublePointerMove(float dx, float dy) {
+-				translate(dx, dy);
++				translation(dx, dy);
+ 				invalidate();
+ 			}
+ 			public void onScale(float setScale) {
+@@ -160,7 +160,7 @@ public class FreeTransformLayout extends FrameLayout {
+ 
+ 		gestureHandler.decomposeRealStagePos(gestureHandler.realStagePos);
+ 		gestureHandler.constrainRealStagePos();
+-		translate(gestureHandler.realStagePos.x, gestureHandler.realStagePos.y);
++		translation(gestureHandler.realStagePos.x, gestureHandler.realStagePos.y);
+ 		str += String.format(
+ 			"\n\t限制后: \n\t\tinitPos: %s, \n\t\trealStagePos: %s", 
+ 			initPos, gestureHandler.realStagePos);
+@@ -190,11 +190,10 @@ public class FreeTransformLayout extends FrameLayout {
+ 
+ 		float circleRadius = 15;
+ 		canvas.drawCircle(gestureHandler.DoubleFocusPos().x, gestureHandler.DoubleFocusPos().y, circleRadius, paint);
+-
+ 	}
+ 
+-	public void translate(float dx, float dy) {
+-		translation.set(dx, dy);
++	public void translation(float x, float y) {
++		translation.set(x, y);
+ 	}
+ 
+ 	public void setScale(float setScale) {
+diff --git a/app/src/main/java/com/goldsprite/appdevframework/apputils/GestureHandler.java b/app/src/main/java/com/goldsprite/appdevframework/apputils/GestureHandler.java
+index 2a9f69f..9cd24ea 100644
+--- a/app/src/main/java/com/goldsprite/appdevframework/apputils/GestureHandler.java
++++ b/app/src/main/java/com/goldsprite/appdevframework/apputils/GestureHandler.java
+@@ -213,7 +213,9 @@ public class GestureHandler {
+ 				Log.logT(TAG.RealtimeInfo, "\t\t总缩放量: %s", MathUtils.preciNum(totalSclDiff));
+ 				Log.logT(TAG.RealtimeInfo, "\t\t当前因子(%s): %s", isSclConstrain ?"被约束": "未约束", MathUtils.preciNum(stageSclFactor));
+ 			}
+-
++			
++			Vector2 t=null;
++			t.set(5);
+ 		} catch (Throwable e) {
+ 			AppLog.dialogE("onTouch", e);
+ 		}
+diff --git a/app/src/main/java/com/goldsprite/appdevframework/apputils/UtilActivity.java b/app/src/main/java/com/goldsprite/appdevframework/apputils/UtilActivity.java
+index c0beb36..ff27482 100644
+--- a/app/src/main/java/com/goldsprite/appdevframework/apputils/UtilActivity.java
++++ b/app/src/main/java/com/goldsprite/appdevframework/apputils/UtilActivity.java
+@@ -12,7 +12,7 @@ import java.util.*;
+ import com.goldsprite.appdevframework.io.*;
+ 
+ 
+-public abstract class UtilActivity extends Activity
++public class UtilActivity extends Activity
+ {
+ 	private static UtilActivity ctx;
+ 	public static UtilActivity Instance() { return ctx; }
+@@ -25,7 +25,7 @@ public abstract class UtilActivity extends Activity
+ 		public boolean requestExternalStoragePermission;
+ 	}
+ 
+-	protected abstract void initOptions();
++	protected void initOptions(){}
+ 
+ 	@Override
+ 	protected void onCreate(Bundle savedInstanceState) {
+@@ -83,13 +83,15 @@ public abstract class UtilActivity extends Activity
+ 			requestPerm(perm);
+ 		}
+ 		else {
+-			Log.hasSavePerm = false;
+-			boolean toggle_NonSavePermTip = PrefsUtils.getPrefs().getBoolean("toggle_NonSavePermTip", false);
+-			if (!toggle_NonSavePermTip) {
+-				AppLog.dialog("", "无LogSavePerm, 储存log功能关闭.");
+-				SharedPreferences.Editor editor = PrefsUtils.getPrefsEditor();
+-				editor.putBoolean("toggle_NonSavePermTip", true);
+-				editor.apply();
++			if(!PermissionUtils.hasExternalStoragePermission()){
++				Log.hasSavePerm = false;
++				boolean toggle_NonSavePermTip = PrefsUtils.getPrefs().getBoolean("toggle_NonSavePermTip", false);
++				if (!toggle_NonSavePermTip) {
++					AppLog.dialog("", "无LogSavePerm, 储存log功能关闭.");
++					SharedPreferences.Editor editor = PrefsUtils.getPrefsEditor();
++					editor.putBoolean("toggle_NonSavePermTip", true);
++					editor.apply();
++				}
+ 			}
+ 			onCreate0();
+ 		}
+@@ -99,7 +101,7 @@ public abstract class UtilActivity extends Activity
+ 		new Thread(){public void run(){throw new RuntimeException("测试子线程异常");}}.start();
+ 	}
+ 
+-	protected abstract void onCreate0();
++	protected void onCreate0(){}
+ 
+ 	protected void requestPerm(PermissionUtils perm) {
+ 		this.perm = perm;

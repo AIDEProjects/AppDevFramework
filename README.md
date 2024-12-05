@@ -36,6 +36,9 @@
 	- 方法一: 使用applicationContext替代activityContext
 
 # 更新
+## 0.6.9: 解决新活动dialog看不见的问题
+	- 统一使用UtilActivity，这样就自动setCtx到新的活动了
+
 ## 0.6.8-alpha: 功能增强与优化
 - **DebugActivityLayoutBuilder**：重构构造函数，优化布局初始化，新增调试视图和日志视图控制方法，改进视图对齐方式。
 - **FreeTransformLayout**：新增坐标符号变量 `coordSign`，重命名变量为 `translation`，优化绘制和布局处理。
