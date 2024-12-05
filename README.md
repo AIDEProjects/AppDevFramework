@@ -36,6 +36,12 @@
 	- 方法一: 使用applicationContext替代activityContext
 
 # 更新
+## 0.7.0: 
+- DebugActivityLayoutBuilder: 
+	- 更新构造器: 自动setContentView，不需要手动设置了
+	- showDebugView/showLogView改为链式调用
+- FreeTransformLayout: 增加gestureHandler与listener的getter方法
+
 ## 0.6.9: 解决新活动dialog看不见的问题
 	- 统一使用UtilActivity，这样就自动setCtx到新的活动了
 

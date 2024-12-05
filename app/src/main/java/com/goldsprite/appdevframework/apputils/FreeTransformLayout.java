@@ -15,7 +15,9 @@ public class FreeTransformLayout extends FrameLayout {
 		LifeCycle
 		}
 	private GestureHandler gestureHandler;
+	public GestureHandler getGestureHandler(){ return gestureHandler; }
 	private GestureHandler.GestureListener listener;
+	public GestureHandler.GestureListener getListener(){ return listener; }
 	private Paint paint;
 
 	private Vector2Int 

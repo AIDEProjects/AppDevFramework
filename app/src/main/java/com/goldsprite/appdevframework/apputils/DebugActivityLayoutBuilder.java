@@ -6,8 +6,8 @@ import com.goldsprite.appdevframework.*;
 import java.util.*;
 
 public class DebugActivityLayoutBuilder {
-	private View mLayoutView;
-	public View MLayoutView() { return mLayoutView; }
+	private View mainView;
+	public View MainView() { return mainView; }
 
 	private LinearLayout mainLayout;
 	private RelativeLayout.LayoutParams mLayout_lp;
@@ -31,6 +31,7 @@ public class DebugActivityLayoutBuilder {
 	}
 
 	public DebugActivityLayoutBuilder(final Activity ctx, final View mainView, final Runnable initRun) {
+		ctx.setContentView(R.layout.debug_activity_main);
 		mainLayout = (LinearLayout) ctx.findViewById(R.id.debugActivityLayout);
 		debugView = (DebugView) ctx.findViewById(R.id.debugActivity_debugView);
 		logView = (LogView) ctx.findViewById(R.id.debugActivity_logView);
@@ -43,20 +44,20 @@ public class DebugActivityLayoutBuilder {
 				mLayout_lp.addRule(RelativeLayout.CENTER_IN_PARENT);
 				mainLayout.setLayoutParams(mLayout_lp);
 
-				mLayoutView = mainView;
+				DebugActivityLayoutBuilder.this.mainView = mainView;
 				LinearLayout.LayoutParams lp2 = new LinearLayout.LayoutParams(
 					LinearLayout.LayoutParams.MATCH_PARENT, 
 					LinearLayout.LayoutParams.MATCH_PARENT);
-				mLayoutView.setLayoutParams(lp2);
-				mainLayout.addView(mLayoutView);
+				mainView.setLayoutParams(lp2);
+				mainLayout.addView(mainView);
 
-				if (initRun != null) mLayoutView.post(initRun);
+				if (initRun != null) mainView.post(initRun);
 			}
 		};
 		mainLayout.post(initLayout);
 	}
 
-	public void showDebugView(final boolean show) {
+	public DebugActivityLayoutBuilder showDebugView(final boolean show) {
 		Runnable run = new Runnable(){
 			public void run() {
 				debugView.setVisibility(show ?View.VISIBLE : View.GONE);
@@ -64,8 +65,9 @@ public class DebugActivityLayoutBuilder {
 			}
 		};
 		mainLayout.post(run);
+		return this;
 	}
-	public void showLogiew(final boolean show) {
+	public DebugActivityLayoutBuilder showLogiew(final boolean show) {
 		Runnable run = new Runnable(){
 			public void run() {
 				logView.setVisibility(show ?View.VISIBLE : View.GONE);
@@ -73,6 +75,7 @@ public class DebugActivityLayoutBuilder {
 			}
 		};
 		mainLayout.post(run);
+		return this;
 	}
 
 	private void ajustAlign() {
